@@ -65,7 +65,7 @@ class MainFrame(wx.Frame):
         self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("icons/list-add.png", wx.BITMAP_TYPE_ANY))
         self.instructionsList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.LC_EDIT_LABELS|wx.LC_HRULES|wx.SUNKEN_BORDER)
         self.stackList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
-        self.controlList = wx.ListCtrl(self, -1, style=wx.LC_LIST|wx.LC_REPORT|wx.SUNKEN_BORDER)
+        self.controlList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.statusList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
 
         self.__set_properties()
@@ -90,7 +90,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TOOL, self.actionBottom, id=tools_ids[7])
         self.Bind(wx.EVT_TOOL, self.actionDelete, id=tools_ids[8])
         self.Bind(wx.EVT_TOOL, self.actionRunNext, id=tools_ids[9])
-        self.Bind(wx.EVT_TOOL, self.actionRefresh, id=tools_ids[9])
+        self.Bind(wx.EVT_TOOL, self.actionRefreshAll, id=tools_ids[9])
        
        
         self.Bind(wx.EVT_TEXT_ENTER, self.actionAdd, self.instructionInput)
@@ -176,12 +176,48 @@ class MainFrame(wx.Frame):
                         sincronizan automáticamente con el microprocesador.'),
                         ('X',u'Bit reservado', u'')]
         
+        registro_control = [('IM',u'Máscara de operación inválida',''),
+                        ('DM',u'Máscara de operando no normalizado',''),
+                        ('ZM',u'Máscara de división por cero',''),
+                        ('OM',u'Máscara de overflow',''),
+                        ('UM', u'Máscara de underflow', ''),
+                        ('PE', u'Máscara de error de precisión', ''),
+                        ('', '', ''),
+                        ('', '', ''),
+                        ('PC0', u'Control de precisión', u'00: precisión sencilla\n\
+                        01:Reservado\n10:Doble precisión (largo)\n\
+                        11: Precisión extendida (temporal)'),
+                        ('PC1', u'Control de precisión', u'00: precisión sencilla\n\
+                        01:Reservado\n10:Doble precisión (largo)\n\
+                        11: Precisión extendida (temporal)'),
+                        ('RC0', u'Control de redondeo', u'00:redondeo al más cercano o par\n\
+                        01:Redondeo hacia abajo\n10:Redondeo hacia arriba\n\
+                        11: Trunca'),
+                        ('RC1', u'Control de redondeo', u'00:redondeo al más cercano o par\n\
+                        01:Redondeo hacia abajo\n10:Redondeo hacia arriba\n\
+                        11: Trunca'),
+                        ('IC', u'Control de infinito', 
+                        u'0: Proyectivo\n1: Afin'),
+                        ('', '', ''),
+                        ('', '', ''),
+                        ('', '', ''),
+                        ]
+        
+        
         registro_estado.reverse()
+        registro_control.reverse()
         n = 0
         for col in registro_estado:
+            self.statusList.InsertColumn(n,col[0])
+            self.statusList.SetColumnWidth(n,30)
+            n+=1
+
+        n = 0
+        for col in registro_control:
             self.controlList.InsertColumn(n,col[0])
             self.controlList.SetColumnWidth(n,30)
             n+=1
+
                             
     def __do_layout(self):
         # begin wxGlade: MainFrame.__do_layout
@@ -262,14 +298,23 @@ class MainFrame(wx.Frame):
     def actionRunNext(self, event): # wxGlade: MainFrame.<event_handler>
         print "Event handler `actionRunNext' not implemented!"
 
-    def actionRefresh(self, event): # wxGlade: MainFrame.<event_handler>
-        #print lib
-       
+    def actionRefreshAll(self, event): # wxGlade: MainFrame.<event_handler>
+        self.actionRefreshControl(event)
+        self.actionRefreshStatus(event)
+        
+    
+    def actionRefreshControl(self, event):
         control_val = lib.getControl()
         print "control: " + str(control_val)
         self.controlList.DeleteAllItems()
-        self.controlList.Append(int2bin(control_val)) #deberia agregar todo la fila
+        self.controlList.Append(int2bin(control_val))
         
+    def actionRefreshStatus(self, event):
+        status_val = lib.getEstado()
+        print "estado: " + str(status_val)
+        self.statusList.DeleteAllItems()
+        self.statusList.Append(int2bin(status_val))
+    
 
     def addInstruction(self, event): # wxGlade: MainFrame.<event_handler>
         print "Event handler `addInstruction' not implemented!"
