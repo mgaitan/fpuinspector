@@ -13,12 +13,12 @@ import wx
 class AboutFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: AboutFrame.__init__
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        kwds["style"] = wx.FRAME_FLOAT_ON_PARENT | wx.CAPTION | wx.FRAME_TOOL_WINDOW
         wx.Frame.__init__(self, *args, **kwds)
         self.sizer_10_staticbox = wx.StaticBox(self, -1, u"Créditos")
         self.bitmap_1 = wx.StaticBitmap(self, -1, wx.Bitmap("icons/80287.jpg", wx.BITMAP_TYPE_ANY))
         self.label_1 = wx.StaticText(self, -1, "FPU Inspector 0.1")
-        self.label_2 = wx.StaticText(self, -1, u"Un software para el estudio del comportamiento \nla Unidad de Punto Flotante\n\nTrabajo Final de la asignatura Sistemas de Computación\nIngeniería en Computación - FCEFyN\nUniversidad Nacional de Córdoba\n", style=wx.ALIGN_CENTRE)
+        self.label_2 = wx.StaticText(self, -1, u"Un software para el estudio del comportamiento de\nla Unidad de Punto Flotante\n\nTrabajo Final de la asignatura Sistemas de Computación\nIngeniería en Computación - FCEFyN\nUniversidad Nacional de Córdoba\n", style=wx.ALIGN_CENTRE)
         self.label_3 = wx.StaticText(self, -1, "Realizado en marzo de 2010 - Licencia GNU v3\nProf Ing. Miguel Solinas", style=wx.ALIGN_CENTRE)
         self.text_ctrl_1 = wx.TextCtrl(self, -1, u"Martín Gaitán   <gaitan@gmail.com>\nJorge Saffe   <jorgesaffe@gmail.com>", style=wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_RICH|wx.TE_AUTO_URL)
         self.button_1 = wx.Button(self, -1, "Cerrar")
@@ -52,10 +52,12 @@ class AboutFrame(wx.Frame):
         sizer_5.Fit(self)
         self.Layout()
         # end wxGlade
+        self.Centre()
 
     def actionCloseAbout(self, event): # wxGlade: AboutFrame.<event_handler>
-        print "Event handler `actionCloseAbout' not implemented!"
-        event.Skip()
+        self.Show(False)
+        self.Destroy()
+        
 
 # end of class AboutFrame
 
