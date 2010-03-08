@@ -71,7 +71,7 @@ class MainFrame(wx.Frame):
         # Tool Bar end
         self.instructionInput = wx.TextCtrl(self, -1, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB)
         self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("icons/list-add.png", wx.BITMAP_TYPE_ANY))
-        self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT|wx.LC_EDIT_LABELS|wx.LC_HRULES|wx.SUNKEN_BORDER)
+        self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT|wx.LC_EDIT_LABELS|wx.LC_HRULES|wx.SUNKEN_BORDER, statusbar=self.statusbar )
         self.stackList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.controlList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.statusList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
@@ -301,22 +301,22 @@ class MainFrame(wx.Frame):
         
 
     def actionGoTop(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `actionGoTop' not implemented!"
+        self.instructionsList.move_top()
 
     def actionUp(self, event): # wxGlade: MainFrame.<event_handler>
         self.instructionsList.move_up()
         
 
     def actionDown(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `actionDown' not implemented!"
+        self.instructionsList.move_down()
         
 
     def actionBottom(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `actionBottom' not implemented!"
+        self.instructionsList.move_bottom()
         
 
     def actionDelete(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `actionDelete' not implemented!"
+        self.instructionsList.delete()
         
 
     def actionRunNext(self, event): # wxGlade: MainFrame.<event_handler>

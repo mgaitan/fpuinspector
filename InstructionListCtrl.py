@@ -7,8 +7,9 @@ import wx
 class InstructionListCtrl(wx.ListCtrl):
     """widget potenciado que permite seleccionar y mover filas"""
     
-    def __init__(self, parent, ID, pos=wx.DefaultPosition,size=wx.DefaultSize, style=0):
+    def __init__(self, parent, ID, pos=wx.DefaultPosition,size=wx.DefaultSize, style=0, statusbar=None):
         wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
+        self.statusbar = statusbar
         
     def get_list(self):
         """devuelve una lista de items de un list control"""
@@ -55,11 +56,57 @@ class InstructionListCtrl(wx.ListCtrl):
     def move_up(self):
         """sube un nivel las filas seleccionadas"""
         selected = self.get_selected_items()
+        if len(selected) == 0:
+            self.statusbar.SetStatusText("no hay instrucciones seleccionadas", 0)
+            return
         list = self.get_list()
         for sel in selected:
             if sel != 0:
                 item = list.pop(sel)
                 list.insert(sel-1,item)
+        self.updateList(list)
+
+    def move_top(self):
+        """agrupa y sube las intrucciones al tope de la lista"""
+        selected = self.get_selected_items()
+        if len(selected) == 0:
+            self.statusbar.SetStatusText("no hay instrucciones seleccionadas", 0)
+            return
+        list = self.get_list()
+        for sel in selected:
+            if sel != 0:
+                item = list.pop(sel)
+                list.insert(selected.index(sel),item)
+        self.updateList(list)
+        
+    def move_down(self):
+        """sube un nivel las filas seleccionadas"""
+        selected = self.get_selected_items()
+        list = self.get_list()
+        last = self.GetItemCount() - 1
+        for sel in selected:
+            if sel != last:
+                item = list.pop(sel)
+                list.insert(sel+1,item)
+        self.updateList(list)
+
+    def move_bottom(self):
+        """agrupa y sube las intrucciones al tope de la lista"""
+        selected = self.get_selected_items()
+        list = self.get_list()
+        last = self.GetItemCount() - 1
+        for sel in selected:
+            if sel != last:
+                item = list.pop(sel)
+                list.append(item)
+        self.updateList(list)
+        
+    def delete(self):
+        """elimina las intrucciones seleccionadas"""
+        selected = self.get_selected_items()
+        list = self.get_list()
+        for sel in selected:
+            list.pop(sel)
         self.updateList(list)
                 
                 
