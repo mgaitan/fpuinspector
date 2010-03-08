@@ -7,14 +7,17 @@ import wx
 import os
 
 from AboutFrame import AboutFrame
+from InstructionListCtrl import InstructionListCtrl 
+
 from helpers import *
 from registros import lib
 # begin wxGlade: dependencies
 # end wxGlade
 
 # begin wxGlade: extracode
-
 # end wxGlade
+
+
 
 class MainFrame(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -29,18 +32,18 @@ class MainFrame(wx.Frame):
         # Menu Bar
         self.frame_1_menubar = wx.MenuBar()
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(wx.NewId(), "Nuevo", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(wx.NewId(), "Abrir", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(wx.NewId(), "Guardar", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(wx.NewId(), "&Nuevo", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(wx.NewId(), "&Abrir", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(wx.NewId(), "&Guardar", "", wx.ITEM_NORMAL)
         wxglade_tmp_menu.Append(wx.NewId(), "Guardar como...", "", wx.ITEM_NORMAL)
         wxglade_tmp_menu.AppendSeparator()
-        wxglade_tmp_menu.Append(wx.NewId(), "Salir", "", wx.ITEM_NORMAL)
-        self.frame_1_menubar.Append(wxglade_tmp_menu, "Archivo")
+        wxglade_tmp_menu.Append(wx.NewId(), "&Salir", "", wx.ITEM_NORMAL)
+        self.frame_1_menubar.Append(wxglade_tmp_menu, "&Archivo")
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(wx.NewId(), u"Índice", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(wx.NewId(), u"Índ&ice", "", wx.ITEM_NORMAL)
         wxglade_tmp_menu.AppendSeparator()
-        wxglade_tmp_menu.Append(wx.NewId(), "Acerca de..", "", wx.ITEM_NORMAL)
-        self.frame_1_menubar.Append(wxglade_tmp_menu, "Ayuda")
+        wxglade_tmp_menu.Append(wx.NewId(), "&Acerca de..", "", wx.ITEM_NORMAL)
+        self.frame_1_menubar.Append(wxglade_tmp_menu, "A&yuda")
         self.SetMenuBar(self.frame_1_menubar)
         # Menu Bar end
         self.statusbar = self.CreateStatusBar(2, 0)
@@ -50,16 +53,16 @@ class MainFrame(wx.Frame):
         
         self.frame_1_toolbar = wx.ToolBar(self, -1, style=wx.TB_HORIZONTAL|wx.TB_DOCKABLE)
         self.SetToolBar(self.frame_1_toolbar)
-        self.frame_1_toolbar.AddLabelTool(tools_ids[0], "Nuevo", wx.Bitmap("icons/document-new.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[1], "Abrir", wx.Bitmap("icons/document-open.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[2], "Guardar", wx.Bitmap("icons/document-save.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[3], "Guardar como...", wx.Bitmap("icons/document-save-as.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[0], "Nuevo", wx.Bitmap("icons/document-new.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Secuencia nuevo", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[1], "Abrir", wx.Bitmap("icons/document-open.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Abrir archivo", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[2], "Guardar", wx.Bitmap("icons/document-save.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Guardar archivo", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[3], "Guardar como...", wx.Bitmap("icons/document-save-as.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Guardar con otro nombre", "")
         self.frame_1_toolbar.AddSeparator()
-        self.frame_1_toolbar.AddLabelTool(tools_ids[4], "Arriba", wx.Bitmap("icons/go-top.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[5], "Subir", wx.Bitmap("icons/go-up.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[6], "Bajar", wx.Bitmap("icons/go-down.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[7], "Abajo", wx.Bitmap("icons/go-bottom.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[8], "Borrar", wx.Bitmap("icons/list-remove.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[4], "Arriba", wx.Bitmap("icons/go-top.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Subir al tope", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[5], "Subir", wx.Bitmap("icons/go-up.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Subir una intrucción", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[6], "Bajar", wx.Bitmap("icons/go-down.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Bajar una instrucción", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[7], "Abajo", wx.Bitmap("icons/go-bottom.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Bajar al final", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[8], "Borrar", wx.Bitmap("icons/list-remove.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Borrar instrucción", "")
         self.frame_1_toolbar.AddSeparator()
         self.frame_1_toolbar.AddLabelTool(tools_ids[9], "Ejecutar", wx.Bitmap("icons/go-next.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
         self.frame_1_toolbar.AddLabelTool(tools_ids[9], "Actualizar", wx.Bitmap("icons/view-refresh.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
@@ -68,7 +71,7 @@ class MainFrame(wx.Frame):
         # Tool Bar end
         self.instructionInput = wx.TextCtrl(self, -1, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB)
         self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("icons/list-add.png", wx.BITMAP_TYPE_ANY))
-        self.instructionsList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.LC_EDIT_LABELS|wx.LC_HRULES|wx.SUNKEN_BORDER)
+        self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT|wx.LC_EDIT_LABELS|wx.LC_HRULES|wx.SUNKEN_BORDER)
         self.stackList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.controlList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.statusList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
@@ -102,6 +105,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.actionAdd, self.bitmap_button_1)
         # end wxGlade
         
+        self.doiexit = wx.MessageDialog( self, "Desea salir? \n",
+                        "GOING away ...", wx.YES_NO)
        
         
 
@@ -122,6 +127,8 @@ class MainFrame(wx.Frame):
         self.instructionInput.SetFocus()
         self.bitmap_button_1.SetSize(self.bitmap_button_1.GetBestSize())    
         # end wxGlade
+        
+        
         self.instructionsList.InsertColumn(0,u'Código')
         
         registro_estado = [('IE',u'Bit de error de operación inválida',
@@ -185,7 +192,7 @@ class MainFrame(wx.Frame):
                         ('X',u'Bit reservado', u'')]
         
         for n,col in enumerate(registro_estado):
-            self.statusList.InsertColumn(n,col[0])
+            self.statusList.InsertColumn(n,col[0], format=wx.LIST_FORMAT_CENTER)
             self.statusList.SetColumnWidth(n,30)
         
         registro_estado.reverse()
@@ -220,7 +227,7 @@ class MainFrame(wx.Frame):
         registro_control.reverse()
         
         for n,col in enumerate(registro_control):
-            self.controlList.InsertColumn(n,col[0])
+            self.controlList.InsertColumn(n,col[0],format=wx.LIST_FORMAT_CENTER)
             self.controlList.SetColumnWidth(n,30)
 
         stack_cols = ('ST', 'Float', 'Binario')
@@ -261,6 +268,8 @@ class MainFrame(wx.Frame):
         self.Centre()
         # end wxGlade
 
+
+
     def actionNew(self, event): # wxGlade: MainFrame.<event_handler>
         print "Event handler `actionNew' not implemented!"
         
@@ -295,7 +304,7 @@ class MainFrame(wx.Frame):
         print "Event handler `actionGoTop' not implemented!"
 
     def actionUp(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `actionUp' not implemented!"
+        self.instructionsList.move_up()
         
 
     def actionDown(self, event): # wxGlade: MainFrame.<event_handler>

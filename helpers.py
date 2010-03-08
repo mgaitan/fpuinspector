@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import reduced_instruction_set as iset
+import wx
 
 def is_valid(line):
     '''checks line for a valid asm sentence'''
@@ -12,10 +13,10 @@ def is_valid(line):
     paramline = "("
     i=0
     for p in params:
-		if i>0:
-			paramline+=", "
-		paramline+=str(p)
-		i+=1
+        if i>0:
+            paramline+=", "
+        paramline+=str(p)
+        i+=1
     paramline += ")"
     commline = "iset."+comm + paramline
     
@@ -27,7 +28,7 @@ def is_valid(line):
         return False
 
 
-## {{{ Recipe 440528 (r2): Conversion in base 2 
+
 _nibbles = {"0":"0000", "1":"0001", "2":"0010", "3":"0011",
             "4":"0100", "5":"0101", "6":"0110", "7":"0111",
             "8":"1000", "9":"1001", "A":"1010", "B":"1011",
@@ -47,8 +48,6 @@ def toBase2(number):
     
 
 
-
-
 def int2bin(n):
     '''converts denary integer n to binary list 
     [MSB,....,LSB]
@@ -63,3 +62,42 @@ def int2bin(n):
         b.append(0)
     b.reverse()
     return b
+
+
+def get_list(list_control):
+    """devulve una lista de items de un list control"""
+    list = []
+    row = []
+    for nrow in range(list_control.GetItemCount()):
+        for ncol in range(list_control.GetColumnCount()):
+            row.append(list_control.GetItem(nrow,ncol))
+        list.append(row)
+    return list
+
+def mov_up(list_control):
+    """sube un nivel las filas seleccionadas"""
+
+
+def get_selected_items(list_control):
+    """
+    Gets the selected items for the list control.
+    Selection is returned as a list of selected indices,
+    low to high.
+    """
+
+    selection = []
+
+    # start at -1 to get the first selected item
+    current = -1
+    while True:
+        next = GetNextSelected(list_control, current)
+        if next == -1:
+            return selection
+        selection.append(next)
+        current = next
+
+def GetNextSelected(list_control, current):
+    """Returns next selected item, or -1 when no more"""
+    return list_control.GetNextItem(current,
+                            wx.LIST_NEXT_ALL,
+                            wx.LIST_STATE_SELECTED) 
