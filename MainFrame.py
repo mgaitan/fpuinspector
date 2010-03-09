@@ -374,7 +374,7 @@ class MainFrame(wx.Frame):
         
   
     def actionAdd(self, event): # wxGlade: MainFrame.<event_handler>
-        instruccion = self.instructionInput.GetValue().lower()
+        instruccion = self.instructionInput.GetValue().upper()
         if self.lib.is_valid(instruccion):
             self.instructionsList.Append([instruccion])
             self.instructionInput.SetValue('')

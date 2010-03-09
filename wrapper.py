@@ -22,45 +22,60 @@ class Wrapper:
     def reset(self):
         self.lib.reset()
     
-    def finit(self,run=True):
+    ##### INSTRUCCIONES IMPLEMENTADAS ######
+    
+    def FINIT(self,run=True):
+        """initialises the FPU to its default state. It flags all registers as empty, although it does not actually change their values. """
         if run:
             self.lib.finit()    
 
-    def ffree(self, n=0, run=True):
+    def FFREE(self, n=0, run=True):
+        """FFREE marks the given register as being empty."""
         if run:
             self.lib.ffree(n)
             
-    def fld(self, n=0.0, run=True):
+    def FLD(self, n=0.0, run=True):
+        """loads a floating-point value out of the given register or memory location, and pushes it on the FPU register stack"""
         if run:
             self.lib.fld(n)
 
-    def fcom(self, n=0, run=True):
+    def FCOM(self, n=0, run=True):
+        """FCOM compares ST0 with the given operand, and sets the FPU flags accordingly. ST0 is treated as the left-hand side of the comparison, so that the carry flag is set (for a "less-than"  result) if ST0 is less than the given operand. """
         if run:
             self.lib.fcom(n)
 
-    def fxch(self, n=0, run=True):
+    def FXCH(self, n=0, run=True):
+        """FXCH exchanges ST0 with a given FPU register. The no-operand form exchanges ST0 with ST1."""
         if run:
             self.lib.fxch(n)
 
-    def faddp(self, n=1, run=True):
+    def FADDP(self, n=1, run=True):
+        """performs the same function as FADD, but pops the register stack after storing the result."""
         if run:
             self.lib.faddp(n)
     
-    def fsubp(self, n=1, run=True):
+    def FSUBP(self, n=1, run=True):
+        """performs the same function as FSUB, but pops the register stack after storing the result."""
         if run:
             self.lib.fsubp(n)
     
-    def fsincos(self, run=True):
+    def FSINCOS(self, run=True):
+        """FSINCOS does the same, but then pushes the cosine of the same value on the register stack, so that the sine ends up in ST1 and the cosine in ST0."""
         if run:
             self.lib.fsincos()
 
-    def fyl2x(self, run=True):
+    def FYL2X(self, run=True):
+        """FYL2X multiplies ST1 by the base-2 logarithm of ST0, stores the result in ST1, and pops the register stack (so that the result ends up in ST0). ST0 must be non-zero and positive."""
         if run:
             self.lib.fyl2x()
 
-    def fsqrt(self, run=True):
+    def FSQRT(self, run=True):
+        """FSQRT calculates the square root of ST0 and stores the result in ST0."""
         if run:
             self.lib.fsqrt()
+            
+    
+    ##### FIN INSTRUCCIONES IMPLEMENTADAS ######            
 
     #HELPER
     def is_valid(self,line):
@@ -79,9 +94,7 @@ class Wrapper:
             i+=1
         paramline += "run=False)"
         commline = "self."+comm + paramline
-        
-        print commline
-        
+        #print commline
         try:
             #run=False just check the call is right but do nothing
             exec commline 
