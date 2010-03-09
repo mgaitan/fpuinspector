@@ -50,10 +50,12 @@ class InstructionListCtrl(wx.ListCtrl):
                                 wx.LIST_NEXT_ALL,
                                 wx.LIST_STATE_SELECTED) 
     
-    def updateList(self, list):
+    def updateList(self, list, selected=[]):
         self.DeleteAllItems()
         for row in list:
             self.Append(row)
+        for sel in selected:
+            self.SetItemState(sel, wx.LIST_STATE_SELECTED, wx.LIST_STATE_SELECTED)
             
                     
     def move_up(self):
@@ -67,7 +69,11 @@ class InstructionListCtrl(wx.ListCtrl):
             if sel != 0:
                 item = list.pop(sel)
                 list.insert(sel-1,item)
-        self.updateList(list)
+        newselected = [sel-1 for sel in selected if sel != 0]
+        self.updateList(list, newselected)
+        
+        
+        
 
     def move_top(self):
         """agrupa y sube las intrucciones al tope de la lista"""
@@ -80,7 +86,10 @@ class InstructionListCtrl(wx.ListCtrl):
             if sel != 0:
                 item = list.pop(sel)
                 list.insert(selected.index(sel),item)
-        self.updateList(list)
+        newselected = [i for i in range(self.num_selected_items())]
+        self.updateList(list, newselected)
+        
+        
         
     def move_down(self):
         """sube un nivel las filas seleccionadas"""
@@ -92,6 +101,8 @@ class InstructionListCtrl(wx.ListCtrl):
                 item = list.pop(sel)
                 list.insert(sel+1,item)
         self.updateList(list)
+        newselected = [sel+1 for sel in selected if sel != last]
+        self.updateList(list, newselected)
 
     def move_bottom(self):
         """agrupa y sube las intrucciones al tope de la lista"""
@@ -102,7 +113,8 @@ class InstructionListCtrl(wx.ListCtrl):
             if sel != last:
                 item = list.pop(sel)
                 list.append(item)
-        self.updateList(list)
+        newselected = [self.self.GetItemCount()-i for i in range(self.num_selected_items())]
+        self.updateList(list, newselected)
         
     def delete(self):
         """elimina las intrucciones seleccionadas"""
