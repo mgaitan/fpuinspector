@@ -9,7 +9,7 @@ class InstructionListCtrl(wx.ListCtrl):
     
     def __init__(self, parent, ID, pos=wx.DefaultPosition,size=wx.DefaultSize, style=0, statusbar=None):
         wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
-        self.statusbar = statusbar
+        #self.statusbar = statusbar
         
     def get_list(self):
         """devuelve una lista de items de un list control"""
@@ -22,7 +22,7 @@ class InstructionListCtrl(wx.ListCtrl):
             list.append(row)
         return list
 
-
+    
     def get_selected_items(self):
         """
         Gets the selected items for the list control.
@@ -40,6 +40,9 @@ class InstructionListCtrl(wx.ListCtrl):
                 return selection
             selection.append(next)
             current = next
+    
+    def num_selected_items(self):
+        return len(self.get_selected_items())
 
     def GetNextSelected(self, current):
         """Returns next selected item, or -1 when no more"""

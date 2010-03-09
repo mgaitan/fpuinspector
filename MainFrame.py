@@ -5,9 +5,11 @@ import wx
 
 # vamos a manejar archivos y directorios
 import os
+#serialización de datos para trabajar con pickle
+import pickle
 
 from AboutFrame import AboutFrame
-from InstructionListCtrl import InstructionListCtrl 
+from myWidgets import InstructionListCtrl 
 
 from helpers import *
 from registros import lib
@@ -30,48 +32,50 @@ class MainFrame(wx.Frame):
         self.sizer_3_staticbox = wx.StaticBox(self, -1, "Instrucciones")
         
         # Menu Bar
+        menues_ids = [wx.NewId() for i in range(7)]
+        
         self.frame_1_menubar = wx.MenuBar()
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(wx.NewId(), "&Nuevo", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(wx.NewId(), "&Abrir", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(wx.NewId(), "&Guardar", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(wx.NewId(), "Guardar como...", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(menues_ids[0], "&Nuevo", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(menues_ids[1], "&Abrir", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(menues_ids[2], "&Guardar", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(menues_ids[3], "Guardar como...", "", wx.ITEM_NORMAL)
         wxglade_tmp_menu.AppendSeparator()
-        wxglade_tmp_menu.Append(wx.NewId(), "&Salir", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(menues_ids[4], "&Salir", "", wx.ITEM_NORMAL)
         self.frame_1_menubar.Append(wxglade_tmp_menu, "&Archivo")
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(wx.NewId(), u"Índ&ice", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(menues_ids[5], u"Índ&ice", "", wx.ITEM_NORMAL)
         wxglade_tmp_menu.AppendSeparator()
-        wxglade_tmp_menu.Append(wx.NewId(), "&Acerca de..", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(menues_ids[6], "&Acerca de..", "", wx.ITEM_NORMAL)
         self.frame_1_menubar.Append(wxglade_tmp_menu, "A&yuda")
         self.SetMenuBar(self.frame_1_menubar)
         # Menu Bar end
-        self.statusbar = self.CreateStatusBar(2, 0)
+        self.statusbar = self.CreateStatusBar(1, 0)
         
         # Tool Bar
         tools_ids = [wx.NewId() for i in range(11)]
         
         self.frame_1_toolbar = wx.ToolBar(self, -1, style=wx.TB_HORIZONTAL|wx.TB_DOCKABLE)
         self.SetToolBar(self.frame_1_toolbar)
-        self.frame_1_toolbar.AddLabelTool(tools_ids[0], "Nuevo", wx.Bitmap("icons/document-new.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Secuencia nuevo", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[1], "Abrir", wx.Bitmap("icons/document-open.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Abrir archivo", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[2], "Guardar", wx.Bitmap("icons/document-save.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Guardar archivo", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[3], "Guardar como...", wx.Bitmap("icons/document-save-as.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Guardar con otro nombre", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[0], "Nuevo", wx.Bitmap("icons/document-new.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Nuevo archivo", "Crea una nueva secuencia de instrucciones")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[1], "Abrir", wx.Bitmap("icons/document-open.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Abrir archivo", "Abre una secuencia de instrucciones de un archivo")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[2], "Guardar", wx.Bitmap("icons/document-save.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Guardar", "Guarda la secuencia de instrucciones actual")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[3], "Guardar como...", wx.Bitmap("icons/document-save-as.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Guardar como...", "Guarda la secuencia en un nuevo archivo")
         self.frame_1_toolbar.AddSeparator()
-        self.frame_1_toolbar.AddLabelTool(tools_ids[4], "Arriba", wx.Bitmap("icons/go-top.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Subir al tope", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[5], "Subir", wx.Bitmap("icons/go-up.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Subir una intrucción", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[6], "Bajar", wx.Bitmap("icons/go-down.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Bajar una instrucción", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[7], "Abajo", wx.Bitmap("icons/go-bottom.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Bajar al final", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[8], "Borrar", wx.Bitmap("icons/list-remove.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Borrar instrucción", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[4], "Arriba", wx.Bitmap("icons/go-top.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Subir al tope", "Agrupa y sube las intrucciones selecciones al principio")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[5], "Subir", wx.Bitmap("icons/go-up.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Subir una intrucción", "Sube las instrucciones seleccionadas un paso")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[6], "Bajar", wx.Bitmap("icons/go-down.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Bajar una instrucción", "Baja las intrucciones seleccionadas un paso")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[7], "Abajo", wx.Bitmap("icons/go-bottom.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Bajar al final", "Agrupa y baja las instrucciones seleccionadas al final")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[8], "Borrar", wx.Bitmap("icons/list-remove.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Borrar", "Borra las instrucciones seleccionadas")
         self.frame_1_toolbar.AddSeparator()
-        self.frame_1_toolbar.AddLabelTool(tools_ids[9], "Ejecutar", wx.Bitmap("icons/go-next.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[9], "Actualizar", wx.Bitmap("icons/view-refresh.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[9], "Ejecutar", wx.Bitmap("icons/go-next.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Ejecutar instrucción", "Ejecuta la siguiente instrucción de la secuencia")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[10], "Actualizar", wx.Bitmap("icons/view-refresh.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Actualizar entorno", "Actualiza los registros y el estado de la pila")
        
        
         # Tool Bar end
         self.instructionInput = wx.TextCtrl(self, -1, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB)
         self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("icons/list-add.png", wx.BITMAP_TYPE_ANY))
-        self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT|wx.LC_EDIT_LABELS|wx.LC_HRULES|wx.SUNKEN_BORDER, statusbar=self.statusbar )
+        self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT|wx.LC_EDIT_LABELS|wx.LC_HRULES|wx.SUNKEN_BORDER)
         self.stackList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.controlList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.statusList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
@@ -79,13 +83,13 @@ class MainFrame(wx.Frame):
         self.__set_properties()
         self.__do_layout()
 
-        self.Bind(wx.EVT_MENU, self.actionNew, id=-1)
-        self.Bind(wx.EVT_MENU, self.actionOpen, id=-1)
-        self.Bind(wx.EVT_MENU, self.actionSave, id=-1)
-        self.Bind(wx.EVT_MENU, self.actionSaveAs, id=-1)
-        self.Bind(wx.EVT_MENU, self.actionExit, id=-1)
-        self.Bind(wx.EVT_MENU, self.actionShowHelp, id=-1)
-        self.Bind(wx.EVT_MENU, self.actionShowAbout, id=-1)
+        self.Bind(wx.EVT_MENU, self.actionNew, id=menues_ids[0])
+        self.Bind(wx.EVT_MENU, self.actionOpen, id=menues_ids[1])
+        self.Bind(wx.EVT_MENU, self.actionSave, id=menues_ids[2])
+        self.Bind(wx.EVT_MENU, self.actionSaveAs, id=menues_ids[3])
+        self.Bind(wx.EVT_MENU, self.actionExit, id=menues_ids[4])
+        self.Bind(wx.EVT_MENU, self.actionShowHelp, id=menues_ids[5])
+        self.Bind(wx.EVT_MENU, self.actionShowAbout, id=menues_ids[6])
        
        
         self.Bind(wx.EVT_TOOL, self.actionNew, id=tools_ids[0])
@@ -98,29 +102,33 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TOOL, self.actionBottom, id=tools_ids[7])
         self.Bind(wx.EVT_TOOL, self.actionDelete, id=tools_ids[8])
         self.Bind(wx.EVT_TOOL, self.actionRunNext, id=tools_ids[9])
-        self.Bind(wx.EVT_TOOL, self.actionRefreshAll, id=tools_ids[9])
+        self.Bind(wx.EVT_TOOL, self.actionRefreshAll, id=tools_ids[10])
        
        
         self.Bind(wx.EVT_TEXT_ENTER, self.actionAdd, self.instructionInput)
         self.Bind(wx.EVT_BUTTON, self.actionAdd, self.bitmap_button_1)
         # end wxGlade
-        
-        self.doiexit = wx.MessageDialog( self, "Desea salir? \n",
-                        "GOING away ...", wx.YES_NO)
+
+        self.doiexit = wx.MessageDialog( self, u'Desea salir? \n',
+                        "Saliendo...", wx.YES_NO)
        
-        
+        self.dirname = ''
+        self.filename = None
+        self.modificado = False
 
     def __set_properties(self):
         # begin wxGlade: MainFrame.__set_properties
-        self.SetTitle("FPU Inspector")
+        self.titulo = "FPU Inspector"
+        self.SetTitle(self.titulo)
         _icon = wx.EmptyIcon()
         _icon.CopyFromBitmap(wx.Bitmap("icons/icon.jpg", wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
-        self.statusbar.SetStatusWidths([300, -1])
+        self.statusbar.SetStatusWidths([-1])
         # statusbar fields
-        statusbar_fields = [u"Agregue una instrucción para comenzar", ""]
-        for i in range(len(statusbar_fields)):
-            self.statusbar.SetStatusText(statusbar_fields[i], i)
+
+        self.updateStatusBar()
+        
+            
         self.frame_1_toolbar.Realize()
         self.instructionInput.SetMinSize((200, 27))
         self.instructionInput.SetToolTipString(u"Ingrese una instrucción de FPU aquí")
@@ -270,22 +278,6 @@ class MainFrame(wx.Frame):
 
 
 
-    def actionNew(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `actionNew' not implemented!"
-        
-
-    def actionOpen(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `actionOpen' not implemented!"
-        
-
-    def actionSave(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `actionSave' not implemented!"
-        
-
-    def actionSaveAs(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `actionSaveAs' not implemented!"
-        
-
     def actionExit(self, event): # wxGlade: MainFrame.<event_handler>
         print "Event handler `actionExit' not implemented!"
         
@@ -301,23 +293,52 @@ class MainFrame(wx.Frame):
         
 
     def actionGoTop(self, event): # wxGlade: MainFrame.<event_handler>
-        self.instructionsList.move_top()
+        num = self.instructionsList.num_selected_items()
+        if num > 0:   
+            self.instructionsList.move_top()
+            self.modificado = True
+            self.updateStatusBar(u"%i instrucciones movidas al inicio de la sencuencia" % num)
+        else:
+            self.updateStatusBar(u"No hay instrucciones seleccionadas")
 
     def actionUp(self, event): # wxGlade: MainFrame.<event_handler>
-        self.instructionsList.move_up()
+        num = self.instructionsList.num_selected_items()
+        if num > 0:   
+            self.instructionsList.move_up()
+            self.modificado = True
+            self.updateStatusBar(u"%i instrucciones subidas un paso" % num)
+        else:
+            self.updateStatusBar(u"No hay instrucciones seleccionadas")
         
 
     def actionDown(self, event): # wxGlade: MainFrame.<event_handler>
-        self.instructionsList.move_down()
+        num = self.instructionsList.num_selected_items()
+        if num > 0:   
+            self.instructionsList.move_down()
+            self.modificado = True
+            self.updateStatusBar(u"%i instrucciones bajadas un paso" % num)
+        else:
+            self.updateStatusBar(u"No hay instrucciones seleccionadas")
         
 
     def actionBottom(self, event): # wxGlade: MainFrame.<event_handler>
-        self.instructionsList.move_bottom()
-        
+        num = self.instructionsList.num_selected_items()
+        if num > 0:   
+            self.instructionsList.move_bottom()
+            self.modificado = True
+            self.updateStatusBar(u"%i instrucciones movidas al final de la secuencia" % num)
+        else:
+            self.updateStatusBar(u"No hay instrucciones seleccionadas")
 
     def actionDelete(self, event): # wxGlade: MainFrame.<event_handler>
-        self.instructionsList.delete()
-        
+        num = self.instructionsList.num_selected_items()
+        if num > 0:   
+            self.instructionsList.delete()
+            self.modificado = True
+            self.updateStatusBar(u"%i instrucciones eliminadas" % num)
+        else:
+            self.updateStatusBar(u"No hay instrucciones seleccionadas")
+
 
     def actionRunNext(self, event): # wxGlade: MainFrame.<event_handler>
         print "Event handler `actionRunNext' not implemented!"
@@ -325,6 +346,7 @@ class MainFrame(wx.Frame):
     def actionRefreshAll(self, event): # wxGlade: MainFrame.<event_handler>
         self.actionRefreshControl(event)
         self.actionRefreshStatus(event)
+        self.updateStatusBar(u"Registros y pila actualizados")
         
     
     def actionRefreshControl(self, event):
@@ -346,26 +368,108 @@ class MainFrame(wx.Frame):
         
         
         
-    
-
-    def addInstruction(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `addInstruction' not implemented!"
-        
-
+  
     def actionAdd(self, event): # wxGlade: MainFrame.<event_handler>
         instruccion = self.instructionInput.GetValue().upper()
-        
         if is_valid(instruccion):
             self.instructionsList.Append([instruccion])
             self.instructionInput.SetValue('')
             self.instructionInput.SetFocus()
-            statusbar_fields = [u"Instrucción agregada", ""]
+            self.updateStatusBar(u"Instrucción '%s' agregada" % instruccion)
+            self.modificado = True
         else:
-            statusbar_fields = [u"Instrucción incorrecta", ""]
+            self.updateStatusBar(u"Instrucción incorrecta")
+
+
+    def actionOpen(self,event):
+        # In this case, the dialog is created within the method because
+        # the directory name, etc, may be changed during the running of the
+        # application. In theory, you could create one earlier, store it in
+        # your frame object and change it when it was called to reflect
+        # current parameters / values
+        dlg = wx.FileDialog(self, "Elija un archivo", self.dirname, "", "*.fpu", wx.OPEN)
+        if dlg.ShowModal() == wx.ID_OK:
+            self.filename=dlg.GetFilename()
+            self.dirname=dlg.GetDirectory()
+
+            # Open the file, read the contents and set them into
+            # the text edit window
+            filehandle=open(os.path.join(self.dirname, self.filename),'r')
+            list = pickle.load(filehandle)
+            
+            #update list
+            self.instructionsList.updateList(list)
+
+            filehandle.close()
+
+            # Report on name of latest file read
+            self.SetTitle("%s <%s>" % (self.titulo, self.filename))
+            
+            self.modificado = False
+            self.updateStatusBar(u"Archivo %s abierto correctamente" % filename)
+        dlg.Destroy()
+
+
+    def actionNew(self, event): # wxGlade: MainFrame.<event_handler>
+        if self.modificado:
+            dlg = wx.MessageDialog(None, u'Si no guarda, se perderán permanentemente los cambios realizados\n¿Desea guardar antes?', 
+                u'Los cambios no ha sido guardados', 
+                style=wx.YES_NO | wx.CANCEL | wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                
+            selection = dlg.ShowModal()
+            if selection == wx.ID_YES:
+                self.actionSave(event)
+            elif selection == wx.ID_CANCEL:
+                evtent.Skip()
+            dlg.Destroy() 
+        
+        self.instructionsList.DeleteAllItems()
+        self.filename = None
+        self.SetTitle(self.titulo)
+        
     
+
+
+
+    def actionSaveAs(self,event):
+        """guarda la lista de intrucciones actual dando un nombre nuevo"""
+        dlg = wx.FileDialog(self, "Elija un archivo", self.dirname, "", "*.fpu", \
+                wx.SAVE | wx.OVERWRITE_PROMPT)
+        if dlg.ShowModal() == wx.ID_OK:
+            # Open the file for write, write, close
+            self.filename=dlg.GetFilename()
+            self.dirname=dlg.GetDirectory()
+            self.actionSave(event)
+            
+        # Get rid of the dialog to keep things tidy
+        dlg.Destroy()
+
+    def actionSave(self,event):
+        """guarda la lista de instrucciones en el archivo abierto. Si no existe, 
+        abre el dialogo Guardar como"""
+        if self.filename is None:
+            self.actionSaveAs(event)
+        else:
+            list = self.instructionsList.get_list()
+            filehandle=open(os.path.join(self.dirname, self.filename),'w')
+            pickle.dump(list,filehandle)
+            filehandle.close()
+            self.SetTitle("%s <%s>" % (self.titulo, self.filename))
+            self.modificado = False
+            
+            self.updateStatusBar(u"Archivo %s guardado" % filename)
+
+
+    def updateStatusBar(self, msg=u'Agregue una instrucción'):
+        statusbar_fields = []
+        if isinstance(msg,str):
+            statusbar_fields.append(msg)
+        elif hasattr(msg,'__iter__'):
+            statusbar_fields = msg
         for i in range(len(statusbar_fields)):
-            self.statusbar.SetStatusText(statusbar_fields[i], i)
-    
+            self.statusbar.SetStatusText(str(statusbar_fields[i]), i)
+        
+        
 
 # end of class MainFrame
 
