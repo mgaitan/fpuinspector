@@ -21,27 +21,30 @@ void _init() {}
 //idem _init pero al terminar el programa 
 void _fini() {}
  
-int getControl(){
+
+//Getters de registros y pila
+int get_control(){
 	return _control_getRegistro();
 }
 
-int getEstado(){
+int get_estado(){
 	return _estado_getRegistro();
 }
 
-int getSt0(){
+int get_st0(){
 	return _st0_getRegistro();
 }
 
-void fpuFfree(int n){
+//wrappers a rutinas de FPU
+void fpu_ffree(int n){
 	_fpu_ffree(n);
 }
 
-void fpuFld(int n){
+void fpu_fld(int n){
 	_fpu_fld(n);
 }
 
-void fpuInit(){
+void fpu_init(){
 	_fpu_finit();
 }
 

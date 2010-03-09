@@ -352,19 +352,19 @@ class MainFrame(wx.Frame):
         
     
     def actionRefreshControl(self, event):
-        control_val = lib.getControl()
+        control_val = lib.get_control()
         print "control: " + str(control_val)
         self.controlList.DeleteAllItems()
         self.controlList.Append(int2bin(control_val))
         
     def actionRefreshStatus(self, event):
-        status_val = lib.getEstado()
+        status_val = lib.get_estado()
         print "estado: " + str(status_val)
         self.statusList.DeleteAllItems()
         self.statusList.Append(int2bin(status_val))
     
     def actionRefreshStack(self, event):
-        stack_val = lib.getSt0()
+        stack_val = lib.get_st0()
         print "st0: " + str(stack_val)
         self.stackList.DeleteAllItems()
         
