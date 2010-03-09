@@ -9,7 +9,7 @@ import os
 import pickle
 
 from AboutFrame import AboutFrame
-from myWidgets import InstructionListCtrl 
+from myWidgets import InstructionListCtrl, RegisterListCtrl
 
 from helpers import *
 from registros import lib
@@ -76,9 +76,13 @@ class MainFrame(wx.Frame):
         self.instructionInput = wx.TextCtrl(self, -1, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB)
         self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("icons/list-add.png", wx.BITMAP_TYPE_ANY))
         self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT| wx.LC_NO_HEADER|wx.LC_HRULES|wx.SUNKEN_BORDER)
+        
+        
         self.stackList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
-        self.controlList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
-        self.statusList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
+        
+        #listas que muestran flags binarios
+        self.controlList = RegisterListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
+        self.statusList = RegisterListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
 
         self.__set_properties()
         self.__do_layout()
@@ -199,12 +203,6 @@ class MainFrame(wx.Frame):
                         actuales no necesitan verificar este bit, ya que se \
                         sincronizan automáticamente con el microprocesador.'),
                         ('X',u'Bit reservado', u'')]
-        
-        for n,col in enumerate(registro_estado):
-            self.statusList.InsertColumn(n,col[0], format=wx.LIST_FORMAT_CENTER)
-            self.statusList.SetColumnWidth(n,30)
-        
-        registro_estado.reverse()
             
         registro_control = [('IM',u'Máscara de operación inválida',''),
                         ('DM',u'Máscara de operando no normalizado',''),
@@ -233,11 +231,14 @@ class MainFrame(wx.Frame):
                         ('', '', ''),
                         ]
         
-        registro_control.reverse()
         
-        for n,col in enumerate(registro_control):
-            self.controlList.InsertColumn(n,col[0],format=wx.LIST_FORMAT_CENTER)
-            self.controlList.SetColumnWidth(n,30)
+        #Configuro las columnas para los registros
+        self.controlList.SetColumns(registro_control)
+        self.statusList.SetColumns(registro_estado)
+        
+            
+        
+        
 
         stack_cols = ('ST', 'Float', 'Binario')
         

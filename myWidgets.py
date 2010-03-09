@@ -5,11 +5,12 @@
 import wx
 
 class InstructionListCtrl(wx.ListCtrl):
-    """widget potenciado que permite seleccionar y mover filas"""
+    """widget List que permite seleccionar y mover filas"""
     
-    def __init__(self, parent, ID, pos=wx.DefaultPosition,size=wx.DefaultSize, style=0, statusbar=None):
+    def __init__(self, parent, ID, pos=wx.DefaultPosition,size=wx.DefaultSize, style=0):
         wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
         #self.statusbar = statusbar
+        
         
     def get_list(self):
         """devuelve una lista de items de un list control"""
@@ -124,12 +125,29 @@ class InstructionListCtrl(wx.ListCtrl):
             list.pop(sel)
         self.updateList(list)
                 
-                
-                
+
+class RegisterListCtrl(wx.ListCtrl):
+    """widget de lista que actualiza su tooltip en función de la columna"""
+    
+    def __init__(self, parent, ID, pos=wx.DefaultPosition,size=wx.DefaultSize, style=0):
+        wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
+        
+        self.Bind(wx.EVT_MOTION, self.updateToolTip)
+        
+    def SetColumns(self, columnas, width=30):
+        columnas.reverse()
+        self.columnas = columnas
+        self.width = width
+        for n,col in enumerate(columnas):
+            self.InsertColumn(n,col[0], format=wx.LIST_FORMAT_CENTER)
+            self.SetColumnWidth(n,width)
+
+    def updateToolTip(self, event):
+        (x,y) = event.GetPosition()
+        col = x/self.width
+        self.SetToolTipString(u"%s: %s" % (self.columnas[col][1],self.columnas[col][2]))
+        
                 
         
-        
-
-
 if __name__ == '__main__':
     pass
