@@ -75,7 +75,7 @@ class MainFrame(wx.Frame):
         # Tool Bar end
         self.instructionInput = wx.TextCtrl(self, -1, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB)
         self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("icons/list-add.png", wx.BITMAP_TYPE_ANY))
-        self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT|wx.LC_EDIT_LABELS|wx.LC_HRULES|wx.SUNKEN_BORDER)
+        self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT| wx.LC_NO_HEADER|wx.LC_HRULES|wx.SUNKEN_BORDER)
         self.stackList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.controlList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.statusList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
@@ -138,6 +138,7 @@ class MainFrame(wx.Frame):
         
         
         self.instructionsList.InsertColumn(0,u'Código')
+        self.instructionsList.SetColumnWidth(0,220)
         
         registro_estado = [('IE',u'Bit de error de operación inválida',
                         u'Indica una operación inválida: desbordamiento \
@@ -241,7 +242,7 @@ class MainFrame(wx.Frame):
         stack_cols = ('ST', 'Float', 'Binario')
         
         for n,col in enumerate(stack_cols):
-            self.stackList.InsertColumn(n,col[0])
+            self.stackList.InsertColumn(n,col)
         self.stackList.SetColumnWidth(0,30)
         self.stackList.SetColumnWidth(1,100)
         self.stackList.SetColumnWidth(2,100)
