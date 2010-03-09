@@ -3,29 +3,6 @@
 import reduced_instruction_set as iset
 import wx
 
-def is_valid(line):
-    '''checks line for a valid asm sentence'''
-    line.replace(',',' ')
-    commlista = line.split()
-    comm = commlista[0]
-    params = commlista[1:]
-    #probando una nueva manera de hacer las cosas, con una cadena de texto
-    paramline = "("
-    i=0
-    for p in params:
-        if i>0:
-            paramline+=", "
-        paramline+=str(p)
-        i+=1
-    paramline += ")"
-    commline = "iset."+comm + paramline
-    
-    
-    try:
-        exec commline
-        return True
-    except:
-        return False
 
 
 

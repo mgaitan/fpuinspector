@@ -12,7 +12,7 @@ from AboutFrame import AboutFrame
 from myWidgets import InstructionListCtrl, RegisterListCtrl
 
 from helpers import *
-from registros import lib
+from wrapper import Wrapper
 # begin wxGlade: dependencies
 # end wxGlade
 
@@ -119,6 +119,8 @@ class MainFrame(wx.Frame):
         self.dirname = ''
         self.filename = None
         self.modificado = False
+        
+        self.lib = Wrapper()
 
     def __set_properties(self):
         # begin wxGlade: MainFrame.__set_properties
@@ -352,19 +354,19 @@ class MainFrame(wx.Frame):
         
     
     def actionRefreshControl(self, event):
-        control_val = lib.get_control()
+        control_val = self.lib.get_control()
         print "control: " + str(control_val)
         self.controlList.DeleteAllItems()
         self.controlList.Append(int2bin(control_val))
         
     def actionRefreshStatus(self, event):
-        status_val = lib.get_estado()
+        status_val = self.lib.get_estado()
         print "estado: " + str(status_val)
         self.statusList.DeleteAllItems()
         self.statusList.Append(int2bin(status_val))
     
     def actionRefreshStack(self, event):
-        stack_val = lib.get_st0()
+        stack_val = self.lib.get_st0()
         print "st0: " + str(stack_val)
         self.stackList.DeleteAllItems()
         
@@ -372,8 +374,8 @@ class MainFrame(wx.Frame):
         
   
     def actionAdd(self, event): # wxGlade: MainFrame.<event_handler>
-        instruccion = self.instructionInput.GetValue().upper()
-        if is_valid(instruccion):
+        instruccion = self.instructionInput.GetValue().lower()
+        if self.lib.is_valid(instruccion):
             self.instructionsList.Append([instruccion])
             self.instructionInput.SetValue('')
             self.instructionInput.SetFocus()
