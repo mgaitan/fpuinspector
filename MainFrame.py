@@ -10,6 +10,8 @@ import pickle
 
 from AboutFrame import AboutFrame
 from myWidgets import InstructionListCtrl, RegisterListCtrl
+from TextCtrlAutoComplete import TextCtrlAutoComplete
+
 
 from helpers import *
 from wrapper import Wrapper
@@ -73,7 +75,10 @@ class MainFrame(wx.Frame):
        
        
         # Tool Bar end
-        self.instructionInput = wx.TextCtrl(self, -1, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB)
+        self.instructionInput = TextCtrlAutoComplete(self, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB, choices=["FINIT","FSQRT","lala"])
+        
+        #self.instructionInput.SetChoices()
+        
         self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("icons/list-add.png", wx.BITMAP_TYPE_ANY))
         self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT| wx.LC_NO_HEADER|wx.LC_HRULES|wx.SUNKEN_BORDER)
         
