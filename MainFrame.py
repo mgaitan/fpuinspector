@@ -9,8 +9,8 @@ import os
 import pickle
 
 from AboutFrame import AboutFrame
-from myWidgets import InstructionListCtrl, RegisterListCtrl
-from TextCtrlAutoComplete import TextCtrlAutoComplete
+from myWidgets import InstructionListCtrl, RegisterListCtrl, TextCtrlAutoComplete
+
 
 
 from helpers import *
