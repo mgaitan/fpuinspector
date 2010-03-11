@@ -1,5 +1,7 @@
-from ctypes import cdll
-import platform
+# -*- coding: utf-8 -*-
+from ctypes import cdll #para interfaz con C
+import platform #para detectar sistema operativo
+import inspect #para generar las instrucciones válidas
 
 
 class Wrapper:
@@ -77,9 +79,20 @@ class Wrapper:
     
     ##### FIN INSTRUCCIONES IMPLEMENTADAS ######            
 
-    #HELPER
+    def get_valid_instructions(self):
+        """
+        devuelve un diccionario {instrucción=docstring} para instrucciones 
+        válidas basado en la instrospección de los métodos de la clase
+        """
+        valid_instructions = dict([(a,inspect.getdoc(b))  for (a,b) 
+                                    in inspect.getmembers(Wrapper,inspect.ismethod) 
+                                    if a[0] == 'F'])
+        return valid_instructions
+
+
+    #HELPERS
     def is_valid(self,line):
-        """checks line for a valid asm sentence"""
+        """se fija si la instrucción ingresada es válida"""
         line.replace(',',' ')
         commlista = line.split()
         comm = commlista[0]
@@ -101,3 +114,6 @@ class Wrapper:
             return True
         except:
             return False
+
+
+

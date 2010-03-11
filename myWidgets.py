@@ -7,10 +7,12 @@ import wx
 class InstructionListCtrl(wx.ListCtrl):
     """widget List que permite seleccionar y mover filas"""
     
-    def __init__(self, parent, ID, pos=wx.DefaultPosition,size=wx.DefaultSize, style=0):
+    def __init__(self, parent, ID, pos=wx.DefaultPosition,size=wx.DefaultSize, style=0, tooltips=None):
         wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
         #self.statusbar = statusbar
-        
+        self.Bind(wx.EVT_MOTION, self.updateToolTip)
+        self.tooltips = tooltips
+    
         
     def get_list(self):
         """devuelve una lista de items de un list control"""
@@ -72,7 +74,20 @@ class InstructionListCtrl(wx.ListCtrl):
                 list.insert(sel-1,item)
         newselected = [sel-1 for sel in selected if sel != 0]
         self.updateList(list, newselected)
-        
+
+
+    def updateToolTip(self, event):
+        (x,y) = event.GetPosition()
+        alto_fila = 22 #self.GetSize().GetHeight()/self.GetItemCount()
+        fila = y/alto_fila
+        #print y, alto_fila, fila
+        instruc = self.GetItem(fila,0).GetText()
+        try:
+            instruc = instruc.split()[0]
+            self.SetToolTipString(self.tooltips[instruc])
+        except:
+            pass
+                
         
         
 
@@ -124,6 +139,14 @@ class InstructionListCtrl(wx.ListCtrl):
         for sel in selected:
             list.pop(sel)
         self.updateList(list)
+
+    def run_from_selected(self):
+
+        #TODO TODO TODO
+        """ejecuta desde la primera instrucción seleccionada o desde el inicio"""
+        run_from = self.get_selected_items()[0] or 0
+        
+        
                 
 
 class RegisterListCtrl(wx.ListCtrl):
@@ -145,7 +168,7 @@ class RegisterListCtrl(wx.ListCtrl):
     def updateToolTip(self, event):
         (x,y) = event.GetPosition()
         col = x/self.width
-        self.SetToolTipString(u"%s: %s" % (self.columnas[col][1],self.columnas[col][2]))
+        self.SetToolTipString(u"")
         
                
 
@@ -208,6 +231,8 @@ class myListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
 
 class TextCtrlAutoComplete (wx.TextCtrl, listmix.ColumnSorterMixin ):
 
+    """Código tomado de http://wiki.wxpython.org/TextCtrlAutoComplete"""
+
     def __init__ ( self, parent, colNames=None, choices = None,
                   multiChoices=None, showHead=True, dropDownClick=True,
                   colFetch=-1, colSearch=0, hideOnNoMatch=True,
@@ -231,7 +256,7 @@ class TextCtrlAutoComplete (wx.TextCtrl, listmix.ColumnSorterMixin ):
         self._colNames = colNames
         self._multiChoices = multiChoices
         self._showHead = showHead
-        self._choices = choices
+        self._choices = choices.keys()
         self._lastinsertionpoint = 0
         self._hideOnNoMatch = hideOnNoMatch
         self._selectCallback = selectCallback
@@ -267,7 +292,7 @@ class TextCtrlAutoComplete (wx.TextCtrl, listmix.ColumnSorterMixin ):
 
         #load the data
         if multiChoices: self.SetMultipleChoices (multiChoices, colSearch=colSearch, colFetch=colFetch)
-        else: self.SetChoices ( choices )
+        else: self.SetChoices ( self._choices )
 
         gp = self
         while ( gp != None ) :

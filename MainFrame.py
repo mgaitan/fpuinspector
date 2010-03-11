@@ -72,16 +72,19 @@ class MainFrame(wx.Frame):
         self.frame_1_toolbar.AddSeparator()
         self.frame_1_toolbar.AddLabelTool(tools_ids[9], "Ejecutar", wx.Bitmap("icons/go-next.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Ejecutar instrucción", "Ejecuta la siguiente instrucción de la secuencia")
         self.frame_1_toolbar.AddLabelTool(tools_ids[10], "Actualizar", wx.Bitmap("icons/view-refresh.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Actualizar entorno", "Actualiza los registros y el estado de la pila")
-       
-       
         # Tool Bar end
-        self.instructionInput = TextCtrlAutoComplete(self, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB, choices=["FINIT","FSQRT","lala"])
+        
+        
+        #libreria de interfaz con C
+        self.lib = Wrapper()
+
+        #input de instrucciones
+        self.instructionInput = TextCtrlAutoComplete(self, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB, choices=self.lib.get_valid_instructions())
         
         #self.instructionInput.SetChoices()
         
         self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("icons/list-add.png", wx.BITMAP_TYPE_ANY))
-        self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT| wx.LC_NO_HEADER|wx.LC_HRULES|wx.SUNKEN_BORDER)
-        
+        self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT| wx.LC_NO_HEADER|wx.LC_HRULES|wx.SUNKEN_BORDER, tooltips=self.lib.get_valid_instructions())
         
         self.stackList = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         
@@ -125,8 +128,7 @@ class MainFrame(wx.Frame):
         self.filename = None
         self.modificado = False
         
-        self.lib = Wrapper()
-
+        
     def __set_properties(self):
         # begin wxGlade: MainFrame.__set_properties
         self.titulo = "FPU Inspector"
@@ -288,8 +290,7 @@ class MainFrame(wx.Frame):
 
 
     def actionExit(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `actionExit' not implemented!"
-        
+        self.OnExit()
 
     def actionShowHelp(self, event): # wxGlade: MainFrame.<event_handler>
         print "Event handler `actionShowHelp' not implemented!"
