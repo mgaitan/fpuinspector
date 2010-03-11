@@ -4,24 +4,24 @@
 
 
 //*********** registros.asm header *******************
-long PRE_CDECL _control_getRegistro( void ) POST_CDECL;
-long PRE_CDECL _estado_getRegistro( void ) POST_CDECL;
-long PRE_CDECL _etiqueta_getRegistro( void ) POST_CDECL; //TODO: ver tamaño de dato de retorno (6x4 bytes?)
-float PRE_CDECL _st0_getRegistro( void ) POST_CDECL;
+extern long PRE_CDECL _control_getRegistro( void ) POST_CDECL;
+extern long PRE_CDECL _estado_getRegistro( void ) POST_CDECL;
+extern long PRE_CDECL _etiqueta_getRegistro( void ) POST_CDECL; //TODO: ver tamaño de dato de retorno (6x4 bytes?)
+extern float PRE_CDECL _st0_getRegistro( void ) POST_CDECL;
 
 //************ intrucciones.asm header ***************
-void PRE_CDECL _reset( void ) POST_CDECL;
-void PRE_CDECL _finit( void ) POST_CDECL;
-void PRE_CDECL _ffree( int ) POST_CDECL;
-void PRE_CDECL _fld( float ) POST_CDECL;
-void PRE_CDECL _finit( void ) POST_CDECL;
-void PRE_CDECL _fcom (int n) POST_CDECL;
-void PRE_CDECL _fxch(int n) POST_CDECL;
-void PRE_CDECL _faddp(int n) POST_CDECL;
-void PRE_CDECL _fsubp(int n) POST_CDECL;
-void PRE_CDECL _fsincos(void) POST_CDECL;
-void PRE_CDECL _fyl2x(void) POST_CDECL;
-void PRE_CDECL _fsqrt(void) POST_CDECL;
+extern  void PRE_CDECL _reset( void ) POST_CDECL;
+extern void PRE_CDECL _finit( void ) POST_CDECL;
+extern void PRE_CDECL _ffree( int ) POST_CDECL;
+extern void PRE_CDECL _fld( float ) POST_CDECL;
+extern void PRE_CDECL _finit( void ) POST_CDECL;
+extern void PRE_CDECL _fcom (int n) POST_CDECL;
+extern void PRE_CDECL _fxch(int n) POST_CDECL;
+extern void PRE_CDECL _faddp(int n) POST_CDECL;
+extern void PRE_CDECL _fsubp(int n) POST_CDECL;
+extern void PRE_CDECL _fsincos(void) POST_CDECL;
+extern void PRE_CDECL _fyl2x(void) POST_CDECL;
+extern void PRE_CDECL _fsqrt(void) POST_CDECL;
 
 //********* inicializador y destructor ****************
 void _init() {

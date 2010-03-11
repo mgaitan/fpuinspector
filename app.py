@@ -9,6 +9,7 @@ from MainFrame import MainFrame
 app = wx.PySimpleApp(0)
 wx.InitAllImageHandlers()
 frame_1 = MainFrame(None, -1, "")
+frame_1.actionRefreshAll()
 app.SetTopWindow(frame_1)
 frame_1.Show()
 app.MainLoop()

@@ -78,14 +78,14 @@ class MainFrame(wx.Frame):
         
         #libreria de interfaz con C
         self.lib = Wrapper()
-
+        implementadas = self.lib.get_valid_instructions()
         #input de instrucciones
-        self.instructionInput = TextCtrlAutoComplete(self, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB, choices=self.lib.get_valid_instructions())
+        self.instructionInput = TextCtrlAutoComplete(self, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB, choices=implementadas)
         
         #self.instructionInput.SetChoices()
         
         self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("icons/list-add.png", wx.BITMAP_TYPE_ANY))
-        self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT| wx.LC_NO_HEADER|wx.LC_HRULES|wx.SUNKEN_BORDER, tooltips=self.lib.get_valid_instructions())
+        self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT| wx.LC_NO_HEADER|wx.LC_HRULES|wx.SUNKEN_BORDER, tooltips=implementadas)
         
         self.stackGrid = wx.grid.Grid(self, -1, size=(1, 1))  #wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         
@@ -361,9 +361,10 @@ class MainFrame(wx.Frame):
     def actionRunNext(self, event): # wxGlade: MainFrame.<event_handler>
         print "Event handler `actionRunNext' not implemented!"
 
-    def actionRefreshAll(self, event): # wxGlade: MainFrame.<event_handler>
+    def actionRefreshAll(self, event=None): # wxGlade: MainFrame.<event_handler>
         self.actionRefreshControl(event)
         self.actionRefreshStatus(event)
+        self.actionRefreshStack(event)
         self.updateStatusBar(u"Registros y pila actualizados")
         
     
@@ -383,6 +384,7 @@ class MainFrame(wx.Frame):
         stack_val = self.lib.get_st0()
         print "st0: " + str(stack_val)
         #self.stackGrid.DeleteAllItems()
+        self.stackGrid.SetCellValue(0,0,unicode(stack_val))
         
         
         

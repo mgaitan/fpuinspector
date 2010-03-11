@@ -168,7 +168,7 @@ class RegisterListCtrl(wx.ListCtrl):
     def updateToolTip(self, event):
         (x,y) = event.GetPosition()
         col = x/self.width
-        self.SetToolTipString(u"")
+        self.SetToolTipString(u"%s: %s" % (self.columnas[col][1],self.columnas[col][2]))
         
                
 

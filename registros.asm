@@ -49,7 +49,7 @@ _etiqueta_getRegistro:
 
 ;---------- pila -------------
 segment .bss
-pila resq 1
+pila resq 1     ;reserve a 64-bit word
 segment .text
     global _st0_getRegistro
 _st0_getRegistro:
