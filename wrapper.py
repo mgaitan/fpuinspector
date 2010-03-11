@@ -19,7 +19,9 @@ class Wrapper:
         return self.lib.get_estado()
     
     def get_st0(self):
+        """retorna el valor de la cabecera de la pila ST"""
         return self.lib.get_st0()
+
         
     def reset(self):
         self.lib.reset()
