@@ -94,22 +94,16 @@ class Wrapper:
 
     #HELPERS
     def is_valid(self,line):
-        """se fija si la instrucción ingresada es válida"""
-        line.replace(',',' ')
+        """
+        se fija si la instrucción ingresada es válida
+        """
+        
+        line = line.replace(',',' ')
         commlista = line.split()
         comm = commlista[0]
-        params = commlista[1:]
-        
-        paramline = "("
-        i=0
-        for p in params:
-            if i>0:
-                paramline+=", "
-            paramline+=str(p)
-            i+=1
-        paramline += "run=False)"
-        commline = "self."+comm + paramline
-        #print commline
+        params = [c+", " for c in commlista[1:]]
+        commline = "self.%s(%s run=False)" % (comm, "".join(params))
+        print commline
         try:
             #run=False just check the call is right but do nothing
             exec commline 
