@@ -14,7 +14,7 @@ import re
 class AboutFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: AboutFrame.__init__
-        kwds["style"] = wx.FRAME_FLOAT_ON_PARENT | wx.CAPTION | wx.FRAME_TOOL_WINDOW
+        kwds["style"] = wx.FRAME_FLOAT_ON_PARENT | wx.CAPTION 
         wx.Frame.__init__(self, *args, **kwds)
         self.sizer_10_staticbox = wx.StaticBox(self, -1, u"Créditos")
         self.bitmap_1 = wx.StaticBitmap(self, -1, wx.Bitmap("icons/80287.jpg", wx.BITMAP_TYPE_ANY))
@@ -34,6 +34,7 @@ class AboutFrame(wx.Frame):
         # begin wxGlade: AboutFrame.__set_properties
         self.SetTitle("Acerca de FPU Inspector")
         self.label_1.SetFont(wx.Font(15, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.button_1.SetFocus()
         # end wxGlade
 
     def __do_layout(self):
