@@ -10,7 +10,7 @@ class Wrapper:
         if platform.system()=='Linux':
             self.lib = cdll.LoadLibrary('./libregistros.so.1.0')
         elif platform.system()=='Windows':
-            self.lib = cdll.LoadLibrary('./libregistros.dll') #TODO
+            self.lib = cdll.WinDLL('./libregistros.dll') #TODO
     
     def get_control(self):
         return self.lib.get_control()

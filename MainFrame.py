@@ -104,7 +104,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.actionShowHelp, id=menues_ids[5])
         self.Bind(wx.EVT_MENU, self.actionShowAbout, id=menues_ids[6])
        
-       
+        self.Bind(wx.EVT_CLOSE, self.onCloseWindow)
+
         self.Bind(wx.EVT_TOOL, self.actionNew, id=tools_ids[0])
         self.Bind(wx.EVT_TOOL, self.actionOpen, id=tools_ids[1])
         self.Bind(wx.EVT_TOOL, self.actionSave, id=tools_ids[2])
@@ -298,7 +299,25 @@ class MainFrame(wx.Frame):
 
 
     def actionExit(self, event): # wxGlade: MainFrame.<event_handler>
-        self.OnExit()
+        self.Close(True)
+
+    def onCloseWindow(self, event):
+        if self.modificado:
+            #self.actionSave(event)
+            dlg = wx.MessageDialog(self, "El archivo no se ha guardado\nDesea guardarlo?", "Salir", wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
+            answer = dlg.ShowModal()
+            if answer == wx.ID_YES:
+                self.actionSave(event)
+            elif answer == wx.ID_NO:
+                self.Destroy() # frame
+            else:
+                event.Skip()
+        else:
+            dlg = wx.MessageDialog(self, "Desea salir?", "Salir", wx.YES_NO | wx.ICON_QUESTION)
+            if dlg.ShowModal() == wx.ID_YES:
+                self.Destroy()
+        dlg.Destroy()
+        
 
     def actionShowHelp(self, event): # wxGlade: MainFrame.<event_handler>
         print "Event handler `actionShowHelp' not implemented!"
@@ -467,6 +486,7 @@ class MainFrame(wx.Frame):
     def actionSave(self,event):
         """guarda la lista de instrucciones en el archivo abierto. Si no existe, 
         abre el dialogo Guardar como"""
+        print event
         if self.filename is None:
             self.actionSaveAs(event)
         else:
@@ -478,6 +498,7 @@ class MainFrame(wx.Frame):
             self.modificado = False
             
             self.updateStatusBar(u"Archivo %s guardado" % filename)
+        return
 
 
     def updateStatusBar(self, msg=u'Agregue una instrucción'):
