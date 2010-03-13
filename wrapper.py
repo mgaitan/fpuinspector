@@ -2,15 +2,16 @@
 from ctypes import cdll #para interfaz con C
 import platform #para detectar sistema operativo
 import inspect #para generar las instrucciones válidas
-
+import os
 
 class Wrapper:
     def __init__(self):
         # load the shared object
         if platform.system()=='Linux':
-            self.lib = cdll.LoadLibrary('./libregistros.so.1.0')
+
+            self.lib = cdll.LoadLibrary('%s/libregistros.so.1.0' % os.path.dirname( __file__ ))
         elif platform.system()=='Windows':
-            self.lib = cdll.WinDLL('./libregistros.dll') #TODO
+            self.lib = cdll.WinDLL('%s/libregistros.dll' % os.path.dirname( __file__ )) #TODO
     
     def get_control(self):
         return self.lib.get_control()

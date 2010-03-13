@@ -4,11 +4,12 @@
 import wx
 import os
 import re
+import helpers
+
 # begin wxGlade: dependencies
 # end wxGlade
 
 # begin wxGlade: extracode
-
 # end wxGlade
 
 class AboutFrame(wx.Frame):
@@ -17,8 +18,8 @@ class AboutFrame(wx.Frame):
         kwds["style"] = wx.FRAME_FLOAT_ON_PARENT | wx.CAPTION 
         wx.Frame.__init__(self, *args, **kwds)
         self.sizer_10_staticbox = wx.StaticBox(self, -1, u"Créditos")
-        self.bitmap_1 = wx.StaticBitmap(self, -1, wx.Bitmap("icons/80287.jpg", wx.BITMAP_TYPE_ANY))
-        self.label_1 = wx.StaticText(self, -1, "FPU Inspector version" + get_svn_revision())
+        self.bitmap_1 = wx.StaticBitmap(self, -1, wx.Bitmap("%s/icons/80287.jpg" % os.path.dirname( __file__ ), wx.BITMAP_TYPE_ANY))
+        self.label_1 = wx.StaticText(self, -1, "FPU Inspector version %s" % helpers.get_svn_revision())
         self.label_2 = wx.StaticText(self, -1, u"Un software para el estudio del comportamiento de\nla Unidad de Punto Flotante\n\nTrabajo Final de la asignatura Sistemas de Computación\nIngeniería en Computación - FCEFyN\nUniversidad Nacional de Córdoba\n", style=wx.ALIGN_CENTRE)
         self.label_3 = wx.StaticText(self, -1, "Realizado en marzo de 2010 - Licencia GNU v3\nProf Ing. Miguel Solinas\n\nhttp://code.google.com/p/fpuinspector", style=wx.ALIGN_CENTRE)
         self.text_ctrl_1 = wx.TextCtrl(self, -1, u"Martín Gaitán   <gaitan@gmail.com>\nJorge Saffe   <jorgesaffe@gmail.com>", style=wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_RICH|wx.TE_AUTO_URL)
@@ -62,30 +63,4 @@ class AboutFrame(wx.Frame):
         
 
 # end of class AboutFrame
-
-def get_svn_revision(path=None):
-    rev = None
-    if path is None:
-        path = os.path.dirname( __file__ )# __path__[0]
-    
-    entries_path = '%s/.svn/entries' % path
-
-    if os.path.exists(entries_path):
-        entries = open(entries_path, 'r').read()
-        # Versions >= 7 of the entries file are flat text.  The first line is
-        # the version number. The next set of digits after 'dir' is the revision.
-        if re.match('(\d+)', entries):
-            rev_match = re.search('\d+\s+dir\s+(\d+)', entries)
-            if rev_match:
-                rev = rev_match.groups()[0]
-        # Older XML versions of the file specify revision as an attribute of
-        # the first entries node.
-        else:
-            from xml.dom import minidom
-            dom = minidom.parse(entries_path)
-            rev = dom.getElementsByTagName('entry')[0].getAttribute('revision')
-
-    if rev:
-        return u' SVN-%s' % rev
-    return u'1.0'
 

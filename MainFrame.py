@@ -4,25 +4,16 @@
 import wx
 import wx.grid
 
-# vamos a manejar archivos y directorios
-import os
-#serialización de datos para trabajar con pickle
-import pickle
+import os       # vamos a manejar archivos y directorios
+import pickle   #serialización de datos para trabajar con pickle
 
 from AboutFrame import AboutFrame
 from myWidgets import InstructionListCtrl, RegisterListCtrl, TextCtrlAutoComplete
 
-
-
 from helpers import *
 from wrapper import Wrapper
-# begin wxGlade: dependencies
-# end wxGlade
 
-# begin wxGlade: extracode
-# end wxGlade
-
-
+_path = os.path.dirname( __file__ )
 
 class MainFrame(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -60,19 +51,19 @@ class MainFrame(wx.Frame):
         
         self.frame_1_toolbar = wx.ToolBar(self, -1, style=wx.TB_HORIZONTAL|wx.TB_DOCKABLE)
         self.SetToolBar(self.frame_1_toolbar)
-        self.frame_1_toolbar.AddLabelTool(tools_ids[0], "Nuevo", wx.Bitmap("icons/document-new.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Nuevo archivo", "Crea una nueva secuencia de instrucciones")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[1], "Abrir", wx.Bitmap("icons/document-open.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Abrir archivo", "Abre una secuencia de instrucciones de un archivo")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[2], "Guardar", wx.Bitmap("icons/document-save.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Guardar", "Guarda la secuencia de instrucciones actual")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[3], "Guardar como...", wx.Bitmap("icons/document-save-as.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Guardar como...", "Guarda la secuencia en un nuevo archivo")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[0], "Nuevo", wx.Bitmap("%s/icons/document-new.png" % _path, wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Nuevo archivo", "Crea una nueva secuencia de instrucciones")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[1], "Abrir", wx.Bitmap("%s/icons/document-open.png" % _path, wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Abrir archivo", "Abre una secuencia de instrucciones de un archivo")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[2], "Guardar", wx.Bitmap("%s/icons/document-save.png" % _path, wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Guardar", "Guarda la secuencia de instrucciones actual")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[3], "Guardar como...", wx.Bitmap("%s/icons/document-save-as.png" % _path, wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Guardar como...", "Guarda la secuencia en un nuevo archivo")
         self.frame_1_toolbar.AddSeparator()
-        self.frame_1_toolbar.AddLabelTool(tools_ids[4], "Arriba", wx.Bitmap("icons/go-top.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Subir al tope", "Agrupa y sube las intrucciones selecciones al principio")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[5], "Subir", wx.Bitmap("icons/go-up.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Subir una intrucción", "Sube las instrucciones seleccionadas un paso")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[6], "Bajar", wx.Bitmap("icons/go-down.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Bajar una instrucción", "Baja las intrucciones seleccionadas un paso")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[7], "Abajo", wx.Bitmap("icons/go-bottom.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Bajar al final", "Agrupa y baja las instrucciones seleccionadas al final")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[8], "Borrar", wx.Bitmap("icons/list-remove.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Borrar", "Borra las instrucciones seleccionadas")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[4], "Arriba", wx.Bitmap("%s/icons/go-top.png" % _path, wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Subir al tope", "Agrupa y sube las intrucciones selecciones al principio")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[5], "Subir", wx.Bitmap("%s/icons/go-up.png" % _path, wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Subir una intrucción", "Sube las instrucciones seleccionadas un paso")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[6], "Bajar", wx.Bitmap("%s/icons/go-down.png" % _path, wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Bajar una instrucción", "Baja las intrucciones seleccionadas un paso")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[7], "Abajo", wx.Bitmap("%s/icons/go-bottom.png" % _path, wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Bajar al final", "Agrupa y baja las instrucciones seleccionadas al final")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[8], "Borrar", wx.Bitmap("%s/icons/list-remove.png" % _path, wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Borrar", "Borra las instrucciones seleccionadas")
         self.frame_1_toolbar.AddSeparator()
-        self.frame_1_toolbar.AddLabelTool(tools_ids[9], "Ejecutar", wx.Bitmap("icons/go-next.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Ejecutar instrucción", "Ejecuta la siguiente instrucción de la secuencia")
-        self.frame_1_toolbar.AddLabelTool(tools_ids[10], "Actualizar", wx.Bitmap("icons/view-refresh.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Actualizar entorno", "Actualiza los registros y el estado de la pila")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[9], "Ejecutar", wx.Bitmap("%s/icons/go-next.png" % _path, wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Ejecutar instrucción", "Ejecuta la siguiente instrucción de la secuencia")
+        self.frame_1_toolbar.AddLabelTool(tools_ids[10], "Actualizar", wx.Bitmap("%s/icons/view-refresh.png" % _path, wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "Actualizar entorno", "Actualiza los registros y el estado de la pila")
         # Tool Bar end
         
         
@@ -84,7 +75,7 @@ class MainFrame(wx.Frame):
         
         #self.instructionInput.SetChoices()
         
-        self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("icons/list-add.png", wx.BITMAP_TYPE_ANY))
+        self.bitmap_button_1 = wx.BitmapButton(self, -1, wx.Bitmap("%s/icons/list-add.png" % _path, wx.BITMAP_TYPE_ANY))
         self.instructionsList = InstructionListCtrl(self, -1, style=wx.LC_REPORT| wx.LC_NO_HEADER|wx.LC_HRULES|wx.SUNKEN_BORDER, tooltips=implementadas)
         
         self.stackGrid = wx.grid.Grid(self, -1, size=(1, 1))  #wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
@@ -136,7 +127,7 @@ class MainFrame(wx.Frame):
         self.titulo = "FPU Inspector"
         self.SetTitle(self.titulo)
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap("icons/icon.jpg", wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap("%s/icons/icon.jpg" % _path, wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.statusbar.SetStatusWidths([-1])
         # statusbar fields

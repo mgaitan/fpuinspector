@@ -121,7 +121,7 @@ class InstructionListCtrl(wx.ListCtrl):
         self.updateList(list, newselected)
 
     def move_bottom(self):
-        """agrupa y sube las intrucciones al tope de la lista"""
+        """agrupa y sube las instrucciones al tope de la lista"""
         selected = self.get_selected_items()
         list = self.get_list()
         last = self.GetItemCount() - 1
@@ -133,7 +133,7 @@ class InstructionListCtrl(wx.ListCtrl):
         self.updateList(list, newselected)
         
     def delete(self):
-        """elimina las intrucciones seleccionadas"""
+        """elimina las instrucciones seleccionadas"""
         selected = self.get_selected_items()
         list = self.get_list()
         for sel in selected:
@@ -141,8 +141,7 @@ class InstructionListCtrl(wx.ListCtrl):
         self.updateList(list)
 
     def run_from_selected(self):
-
-        #TODO TODO TODO
+        #TODO todo to-do
         """ejecuta desde la primera instrucción seleccionada o desde el inicio"""
         run_from = self.get_selected_items()[0] or 0
         
