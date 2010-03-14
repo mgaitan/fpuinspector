@@ -297,17 +297,18 @@ class MainFrame(wx.Frame):
             #self.actionSave(event)
             dlg = wx.MessageDialog(self, "El archivo no se ha guardado\nDesea guardarlo?", "Salir", wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
             answer = dlg.ShowModal()
+            dlg.Destroy()
             if answer == wx.ID_YES:
                 self.actionSave(event)
             elif answer == wx.ID_NO:
                 self.Destroy() # frame
-            else:
-                event.Skip()
         else:
             dlg = wx.MessageDialog(self, "Desea salir?", "Salir", wx.YES_NO | wx.ICON_QUESTION)
-            if dlg.ShowModal() == wx.ID_YES:
+            answer = dlg.ShowModal()
+            dlg.Destroy()
+            if answer == wx.ID_YES:
                 self.Destroy()
-        dlg.Destroy()
+        
         
 
     def actionShowHelp(self, event): # wxGlade: MainFrame.<event_handler>
