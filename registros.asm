@@ -2,8 +2,8 @@
 segment .bss
 control_var resw 1
 segment .text
-    global _control_getRegistro
-_control_getRegistro:
+    global _get_control
+_get_control:
     enter 0,0
     fwait
     ;FSTCW stores the FPU control word (governing things like the 
@@ -17,8 +17,8 @@ _control_getRegistro:
 
 ;------------ estado -------------
 segment .text
-    global _estado_getRegistro
-_estado_getRegistro:
+    global _get_estado
+_get_estado:
     enter 0,0
     fwait
     fstsw ax ;FSTSW stores the FPU status word into AX or into a 2-byte memory area.
@@ -31,8 +31,8 @@ entornoFPU  resd 2
 etiqueta    resd 6
 
 segment .text
-    global _etiqueta_getRegistro
-_etiqueta_getRegistro:
+    global _get_etiqueta
+_get_etiqueta:
     enter 0,0
     fwait
     
@@ -51,8 +51,8 @@ _etiqueta_getRegistro:
 segment .bss
 pila resq 1     ;reserve a 64-bit word
 segment .text
-    global _st0_getRegistro
-_st0_getRegistro:
+    global _get_pila
+_get_pila:
     enter 0,0
     fwait
     ;The FST and FSTP instructions copy the value on 

@@ -90,21 +90,14 @@ fin_ffree:
     leave       
     ret
 ;------------ FLD -------------
-segment .bss
-valor resq 1
 segment .text
     global _fld
 _fld:
     ;loads a floating-point value out of the given register or memory 
     ;location, and pushes it on the FPU register stack
-    enter 0,0
-    pusha
-    mov eax,[ebp + 8]
-    fld qword[eax]  
-    fwait   
-    popa
-    leave       
-    ret 
+    fld qword [ebp + 8]
+    ret      
+     
 ;------------ FCOM -------------
 segment .data
 salto_fcom dd fcom0,fcom1,fcom2,fcom3,fcom4,fcom5,fcom6,fcom7
@@ -187,6 +180,14 @@ fin_fxch:
     popa
     leave       
     ret
+
+;------ FADD -------
+section .text
+    global _fadd
+_fadd:
+    fadd
+    ret
+
 ;------------ FADDP -------------
 segment .data
 salto_faddp dd faddp0,faddp1,faddp2,faddp3,faddp4,faddp5,faddp6,faddp7
@@ -226,6 +227,8 @@ fin_faddp:
     popa
     leave       
     ret 
+
+
 ;------------ FSUBP -------------
 segment .data
 salto_fsubp dd fsubp0,fsubp1,fsubp2,fsubp3,fsubp4,fsubp5,fsubp6,fsubp7

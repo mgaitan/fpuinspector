@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ctypes import cdll #para interfaz con C
+from ctypes import * #para interfaz con C
 import platform #para detectar sistema operativo
 import inspect #para generar las instrucciones válidas
 import os
@@ -9,9 +9,9 @@ class Wrapper:
         # load the shared object
         if platform.system()=='Linux':
 
-            self.lib = cdll.LoadLibrary('%s/libregistros.so.1.0' % os.path.dirname( __file__ ))
+            self.lib = cdll.LoadLibrary('./libfpu.so.1.0') # % os.path.dirname( __file__ ))
         elif platform.system()=='Windows':
-            self.lib = cdll.WinDLL('%s/libregistros.dll' % os.path.dirname( __file__ )) #TODO
+            self.lib = cdll.WinDLL('%s/libfpu.dll' % os.path.dirname( __file__ )) #TODO
     
     def get_control(self):
         return self.lib.get_control()
@@ -19,11 +19,20 @@ class Wrapper:
     def get_estado(self):
         return self.lib.get_estado()
     
-    def get_st0(self):
+    def get_pila(self):
         """retorna el valor de la cabecera de la pila ST"""
-        return self.lib.get_st0()
-
+        space = c_double * 8
+        pila = space()
+        ok = self.lib.get_pila(pila)
+        pila_al_vesre = []   #extraigo todos los valores de la pila y los meto de nuevo.
+        for valor in pila:
+            #print valor
+            pila_al_vesre.insert(0,valor) #invierto el iterable en una lista
+        for valor in pila_al_vesre:
+            self.FLD(valor)
+        return pila
         
+
     def reset(self):
         self.lib.reset()
     
@@ -42,7 +51,7 @@ class Wrapper:
     def FLD(self, n=0.0, run=True):
         """loads a floating-point value out of the given register or memory location, and pushes it on the FPU register stack"""
         if run:
-            self.lib.fld(n)
+            self.lib.fld(c_double(n))
 
     def FCOM(self, n=0, run=True):
         """FCOM compares ST0 with the given operand, and sets the FPU flags accordingly. ST0 is treated as the left-hand side of the comparison, so that the carry flag is set (for a "less-than"  result) if ST0 is less than the given operand. """
@@ -53,6 +62,12 @@ class Wrapper:
         """FXCH exchanges ST0 with a given FPU register. The no-operand form exchanges ST0 with ST1."""
         if run:
             self.lib.fxch(n)
+
+    def FADD(self, n=1, run=True):
+        """performs the sum between st0 and st1 and stores the result in st0"""
+        if run:
+            self.lib.fadd()
+
 
     def FADDP(self, n=1, run=True):
         """performs the same function as FADD, but pops the register stack after storing the result."""

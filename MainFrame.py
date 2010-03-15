@@ -392,10 +392,14 @@ class MainFrame(wx.Frame):
         self.statusList.Append(int2bin(status_val))
     
     def actionRefreshStack(self, event):
-        stack_val = self.lib.get_st0()
-        print "st0: " + str(stack_val)
+        stack = self.lib.get_pila()
+        stack = [unicode(val) for val in stack]
+        print stack
         #self.stackGrid.DeleteAllItems()
-        self.stackGrid.SetCellValue(0,0,unicode(stack_val))
+        for n,val in enumerate(stack):
+            pass
+            #self.stackGrid.SetCellValue(n,0,str(val))
+            #self.stackGrid.SetCellValue(n,1,unicode(val.hex()))
         
         
         
