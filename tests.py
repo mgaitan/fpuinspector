@@ -27,7 +27,7 @@ Caso de prueba 3:
 >>> res = w.get_stack() #doctest: +ELLIPSIS
 [18.300..., 5.0, 3.0, nan, nan, nan, nan, nan]
 
-Caso de prueba 4:
+Caso de prueba:
 - Instruccion FADD
 
 >>> w.FADD()
@@ -35,7 +35,17 @@ Caso de prueba 4:
 [23.300..., 3.0, nan, nan, nan, nan, nan, nan]
 
 
-Caso de prueba 5:
+Caso de prueba: Raiz cuadrada
+
+>>> w.FSQRT()
+>>> res = w.get_stack() #doctest: +ELLIPSIS
+[4.827..., 3.0, nan, nan, nan, nan, nan, nan]
+
+
+
+
+
+Caso de prueba:
 - Almacenar más de 8 valores en la pila
 
 >>> import wrapper
@@ -47,6 +57,8 @@ Caso de prueba 5:
 >>> res = w.get_stack() #doctest: +ELLIPSIS
 [2.10..., 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 >>> 
+
+
 
 
 """
