@@ -9,8 +9,14 @@ extern int PRE_CDECL _get_estado( void ) POST_CDECL;
 extern int PRE_CDECL _get_etiqueta( void ) POST_CDECL; //TODO: ver tamaño de dato de retorno (6x4 bytes?)
 extern double PRE_CDECL _get_pila( void ) POST_CDECL;
 
+
 //************ intrucciones.asm header ***************
 extern  void PRE_CDECL _reset( void ) POST_CDECL;
+
+extern void _restore_contexto(int contexto[512]) POST_CDECL;
+extern void _save_contexto(int contexto[512]) POST_CDECL;
+
+
 extern void PRE_CDECL _finit( void ) POST_CDECL;
 extern void PRE_CDECL _ffree( int ) POST_CDECL;
 extern void PRE_CDECL _fld( double ) POST_CDECL;
@@ -32,7 +38,20 @@ void _init() {
 void _fini() {
     //idem _init pero al terminar el programa 
 }
- 
+
+//****************** contexto *****************************
+
+int contexto[512];
+void restore_contexto(){
+    _restore_contexto(contexto);
+}
+
+void save_contexto(){
+    _save_contexto(contexto);
+}
+
+
+
 
 //*********** Wrapper para rutinas de registros.asm ********
 
@@ -50,10 +69,12 @@ long get_etiqueta(){
 
 int get_pila(double * pila){
   int i;
+  save_contexto();
   for(i=0;i<8;i++){
         pila[i]=_get_pila(); //pop de los registros
         //printf("%f\n", pila[i]);
     }
+    restore_contexto();
 return 0;
 }
 
@@ -71,7 +92,9 @@ void ffree(int n){
 }
 
 void fld(double val){
+    //restore_contexto();
     _fld(val);
+    //save_contexto();
 }
 
 void fcom(int n){

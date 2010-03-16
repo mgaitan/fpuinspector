@@ -20,8 +20,8 @@ _reset:
     leave
     ret
 ;--------- Set-Get Contexto -----------
-    global _setContexto
-_setContexto:
+    global _restore_contexto
+_restore_contexto:
     enter 0,0
     mov eax,[ebp+8]     
     emms    
@@ -32,8 +32,8 @@ _setContexto:
     leave
     ret
     
-    global _getContexto
-_getContexto:
+    global _save_contexto
+_save_contexto:
     enter 0,0
     fwait
     mov eax,[ebp+8]
@@ -90,12 +90,21 @@ fin_ffree:
     leave       
     ret
 ;------------ FLD -------------
-segment .text
+;segment .bss
+;    valor resq 1
+
+segment .text    
     global _fld
 _fld:
     ;loads a floating-point value out of the given register or memory 
     ;location, and pushes it on the FPU register stack
-    fld qword [ebp + 8]
+    ;enter 0,0
+    ;pusha
+    ;mov eax, [ebp + 8]
+    fld qword [ebp + 8] ; [ebp + 8]
+    ;fwait   
+    ;popa
+    ;leave
     ret      
      
 ;------------ FCOM -------------

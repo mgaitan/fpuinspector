@@ -13,7 +13,10 @@ from myWidgets import InstructionListCtrl, RegisterListCtrl, TextCtrlAutoComplet
 from helpers import *
 from wrapper import Wrapper
 
-_path = os.path.dirname( __file__ )
+from singleton import BufferStack
+
+
+_path = os.path.abspath(os.path.dirname(__file__)) 
 
 class MainFrame(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -120,6 +123,8 @@ class MainFrame(wx.Frame):
         self.dirname = ''
         self.filename = None
         self.modificado = False
+
+        self.buffer_stack = BufferStack()   #singleton
         
         
     def __set_properties(self):
@@ -373,10 +378,10 @@ class MainFrame(wx.Frame):
         print "Event handler `actionRunNext' not implemented!"
 
     def actionRefreshAll(self, event=None): # wxGlade: MainFrame.<event_handler>
-        self.actionRefreshControl(event)
-        self.actionRefreshStatus(event)
+        #self.actionRefreshControl(event)
+        #self.actionRefreshStatus(event)
         self.actionRefreshStack(event)
-        self.updateStatusBar(u"Registros y pila actualizados")
+        #self.updateStatusBar(u"Registros y pila actualizados")
         
     
     def actionRefreshControl(self, event):
@@ -392,15 +397,13 @@ class MainFrame(wx.Frame):
         self.statusList.Append(int2bin(status_val))
     
     def actionRefreshStack(self, event):
-        stack = self.lib.get_pila()
-        stack = [unicode(val) for val in stack]
-        print stack
-        #self.stackGrid.DeleteAllItems()
+        self.lib.update_buffer_stack()
+        stack = self.buffer_stack.get_value()
         for n,val in enumerate(stack):
-            pass
-            #self.stackGrid.SetCellValue(n,0,str(val))
+            #pass
+            self.stackGrid.SetCellValue(n,0,unicode(val))
             #self.stackGrid.SetCellValue(n,1,unicode(val.hex()))
-        
+        self.lib.set_buffer_stack()
         
         
   

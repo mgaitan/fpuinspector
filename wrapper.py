@@ -4,33 +4,53 @@ import platform #para detectar sistema operativo
 import inspect #para generar las instrucciones válidas
 import os
 
+from singleton import BufferStack
+
+
 class Wrapper:
     def __init__(self):
         # load the shared object
         if platform.system()=='Linux':
 
-            self.lib = cdll.LoadLibrary('./libfpu.so.1.0') # % os.path.dirname( __file__ ))
+            self.lib = cdll.LoadLibrary('%s/libfpu.so.1.0' % os.path.abspath(os.path.dirname(__file__)) ) # % os.path.dirname( __file__ ))
         elif platform.system()=='Windows':
-            self.lib = cdll.WinDLL('%s/libfpu.dll' % os.path.dirname( __file__ )) #TODO
-    
+            self.lib = cdll.WinDLL('%s/libfpu.dll' % os.path.abspath(os.path.dirname(__file__)) ) #TODO
+        
+        self.buffer_stack = BufferStack()   #singleton
+
     def get_control(self):
         return self.lib.get_control()
     
     def get_estado(self):
         return self.lib.get_estado()
     
-    def get_pila(self):
-        """retorna el valor de la cabecera de la pila ST"""
+
+    def get_stack(self):
+        """retorna un array con los valores del stack"""
+        space = c_double * 8
+        pila = space()
+        #self.lib.save_contexto()
+        ok = self.lib.get_pila(pila)
+        #self.lib.restore_contexto()
+        print [val for val in pila] 
+        return pila #update buffer
+
+    def update_buffer_stack(self):
+        """retorna un array con los valores del stack"""
         space = c_double * 8
         pila = space()
         ok = self.lib.get_pila(pila)
+        self.buffer_stack.set_value(pila) #update buffer
+        
+    def set_buffer_stack(self):
+        pila = self.buffer_stack.get_value()
         pila_al_vesre = []   #extraigo todos los valores de la pila y los meto de nuevo.
         for valor in pila:
             #print valor
             pila_al_vesre.insert(0,valor) #invierto el iterable en una lista
         for valor in pila_al_vesre:
             self.FLD(valor)
-        return pila
+        #return pila
         
 
     def reset(self):
