@@ -26,6 +26,7 @@ extern void PRE_CDECL _fxch(int n) POST_CDECL;
 extern void PRE_CDECL _faddp(int n) POST_CDECL;
 extern void PRE_CDECL _fadd( void ) POST_CDECL;
 extern void PRE_CDECL _fsubp(int n) POST_CDECL;
+extern void PRE_CDECL _fsub( void ) POST_CDECL;
 extern void PRE_CDECL _fsincos(void) POST_CDECL;
 extern void PRE_CDECL _fyl2x(void) POST_CDECL;
 extern void PRE_CDECL _fsqrt(void) POST_CDECL;
@@ -112,6 +113,10 @@ void fadd(){
 
 void faddp(int n){
     _faddp(n);
+}
+
+void fsub(){
+    _fadd();
 }
 
 void fsubp(int n){

@@ -99,6 +99,12 @@ class Wrapper:
         """performs the same function as FADD, but pops the register stack after storing the result."""
         if run:
             self.lib.faddp(n)
+
+
+    def FSUB(self, n=1, run=True):
+        """performs the rest between st0 and st1 and stores the result in st0"""
+        if run:
+            self.lib.fsub()
     
     def FSUBP(self, n=1, run=True):
         """performs the same function as FSUB, but pops the register stack after storing the result."""

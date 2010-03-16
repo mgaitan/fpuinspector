@@ -41,12 +41,17 @@ Caso de prueba: Raiz cuadrada
 >>> res = w.get_stack() #doctest: +ELLIPSIS
 [4.827..., 3.0, nan, nan, nan, nan, nan, nan]
 
+Caso de prueba: FSUB
+
+>>> w.FSUB()
+>>> res = w.get_stack() #doctest: +ELLIPSIS
+[1.827..., nan, nan, nan, nan, nan, nan, nan]
+
+
 
 Caso de prueba:
 - Almacenar más de 8 valores en la pila
 
->>> import wrapper
->>> w = wrapper.Wrapper()
 >>> for i in range(8):
 ...     w.FLD(1.0)
 ... 

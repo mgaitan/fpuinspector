@@ -238,6 +238,15 @@ fin_faddp:
     ret 
 
 
+;------ FSUB -------
+section .text
+    global _fsub
+_fsub:
+    fsub
+    ret
+
+
+
 ;------------ FSUBP -------------
 segment .data
 salto_fsubp dd fsubp0,fsubp1,fsubp2,fsubp3,fsubp4,fsubp5,fsubp6,fsubp7
