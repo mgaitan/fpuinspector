@@ -42,9 +42,6 @@ Caso de prueba: Raiz cuadrada
 [4.827..., 3.0, nan, nan, nan, nan, nan, nan]
 
 
-
-
-
 Caso de prueba:
 - Almacenar más de 8 valores en la pila
 
