@@ -29,9 +29,26 @@ Caso de prueba 3:
 
 Caso de prueba 4:
 - Instruccion FADD
+
 >>> w.FADD()
 >>> res = w.get_stack() #doctest: +ELLIPSIS
 [23.300..., 3.0, nan, nan, nan, nan, nan, nan]
+
+
+Caso de prueba 5:
+- Almacenar más de 8 valores en la pila
+
+>>> import wrapper
+>>> w = wrapper.Wrapper()
+>>> for i in range(8):
+...     w.FLD(1.0)
+... 
+>>> w.FLD(2.1)
+>>> res = w.get_stack() #doctest: +ELLIPSIS
+[2.10..., 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+>>> 
+
+
 """
 
 if __name__ == "__main__":
