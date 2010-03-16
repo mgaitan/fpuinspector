@@ -32,7 +32,13 @@ class Wrapper:
         #self.lib.save_contexto()
         ok = self.lib.get_pila(pila)
         #self.lib.restore_contexto()
-        print [val for val in pila] 
+        print [val for val in pila]
+        pila_al_vesre = []   #extraigo todos los valores de la pila y los meto de nuevo.
+        for valor in pila:
+            #print valor
+            pila_al_vesre.insert(0,valor) #invierto el iterable en una lista
+        for valor in pila_al_vesre:
+            self.FLD(valor)
         return pila #update buffer
 
     def update_buffer_stack(self):
