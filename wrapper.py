@@ -79,6 +79,36 @@ class Wrapper:
         if run:
             self.lib.fld(c_double(n))
 
+    def FLD1(self, run=True):
+        if run:
+            self.lib.fld1()
+
+    def FLDL2E(self, run=True):
+        if run:
+            self.lib.fldl2e()
+
+    def FLDL2T(self, run=True):
+        if run:
+            self.lib.fldl2t()
+
+    def FLDLG2(self, run=True):
+        if run:
+            self.lib.fldlg2()
+
+    def FLDLN2(self, run=True):
+        if run:
+            self.lib.fldln2()
+
+    def FLDPI(self, run=True):
+        if run:
+            self.lib.fldpi()
+
+    def FLDZ(self, run=True):
+        if run:
+            self.lib.fldz()
+
+
+
     def FCOM(self, n=0, run=True):
         """FCOM compares ST0 with the given operand, and sets the FPU flags accordingly. ST0 is treated as the left-hand side of the comparison, so that the carry flag is set (for a "less-than"  result) if ST0 is less than the given operand. """
         if run:

@@ -19,7 +19,18 @@ extern void _save_contexto(int contexto[512]) POST_CDECL;
 
 extern void PRE_CDECL _finit( void ) POST_CDECL;
 extern void PRE_CDECL _ffree( int ) POST_CDECL;
-extern void PRE_CDECL _fld( double ) POST_CDECL;
+
+
+
+extern void PRE_CDECL _fld1( void) POST_CDECL;
+extern void PRE_CDECL _fldl2e( void ) POST_CDECL;
+extern void PRE_CDECL _fldl2t( void ) POST_CDECL;
+extern void PRE_CDECL _fldlg2( void ) POST_CDECL;
+extern void PRE_CDECL _fldln2( void ) POST_CDECL;
+extern void PRE_CDECL _fldlpi( void ) POST_CDECL;
+extern void PRE_CDECL _fldz( void ) POST_CDECL;
+
+
 extern void PRE_CDECL _finit( void ) POST_CDECL;
 extern void PRE_CDECL _fcom (int n) POST_CDECL;
 extern void PRE_CDECL _fxch(int n) POST_CDECL;
@@ -98,6 +109,17 @@ void fld(double val){
     //save_contexto();
 }
 
+void fld1(){ _fld1();}
+void fldl2e(){ _fldl2e();}
+void fldl2t(){ _fldl2t();}
+void fldlg2(){ _fldlg2();}
+void fldln2(){ _fldln2();}
+void fldpi(){ _fldpi();}
+void fldz(){ _fldz();}
+
+
+
+
 void fcom(int n){
     _fcom(n);
 }
@@ -116,7 +138,7 @@ void faddp(int n){
 }
 
 void fsub(){
-    _fadd();
+    _fsub();
 }
 
 void fsubp(int n){

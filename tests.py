@@ -49,6 +49,17 @@ Caso de prueba: FSUB
 
 
 
+caso de prueba: FLDxx (constantes)
+
+>>> w.FLD1()
+>>> w.FLDL2E()
+>>> w.FLDL2T()
+>>> w.FLDLG2()
+>>> res = w.get_stack()
+[0.3010299956639812, 3.3219280948873622, 1.4426950408889634, 1.0, nan, nan, nan, nan]
+
+
+
 Caso de prueba:
 - Almacenar más de 8 valores en la pila
 

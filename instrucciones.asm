@@ -106,6 +106,53 @@ _fld:
     ;popa
     ;leave
     ret      
+
+;---------------FLDxx-------------
+;These instructions push specific 
+;standard constants on the FPU register stack. 
+;FLD1 pushes the value 1; 
+;FLDL2E pushes the base-2 logarithm of e; 
+;FLDL2T pushes the base-2 log of 10; 
+;FLDLG2 pushes the base-10 log of 2; 
+;FLDLN2 pushes the base-e log of 2; 
+;FLDPI pushes pi; and FLDZ pushes zero. 
+
+segment .text    
+    global _fldz
+_fldz:
+    fldz
+    ret
+segment .text    
+    global _fld1
+_fld1:
+    fld1
+    ret
+segment .text    
+    global _fldl2e
+_fldl2e:
+    fldl2e
+    ret
+segment .text    
+    global _fldl2t
+_fldl2t:
+    fldl2t
+    ret
+segment .text    
+    global _fldlg2
+_fldlg2:
+    fldlg2
+    ret
+segment .text    
+    global _fldln2
+_fldln2:
+    fldln2
+    ret
+segment .text    
+    global _fldpi
+_fldpi:
+    fldpi
+    ret
+
      
 ;------------ FCOM -------------
 segment .data
