@@ -69,12 +69,12 @@ long get_etiqueta(){
 
 int get_pila(double * pila){
   int i;
-  save_contexto();
+  //save_contexto();
   for(i=0;i<8;i++){
         pila[i]=_get_pila(); //pop de los registros
         //printf("%f\n", pila[i]);
     }
-    restore_contexto();
+    //restore_contexto();
 return 0;
 }
 
