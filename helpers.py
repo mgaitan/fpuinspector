@@ -67,3 +67,21 @@ def get_svn_revision(path=None):
         return u' SVN-%s' % rev
     return u'1.0'
 
+
+
+
+class BufferStack():
+    def __init__(self):
+        self.fhdir = u"%s/stack.tmp" % os.path.abspath(os.path.dirname(__file__))
+
+    def set_stack_from_file(self):
+        fh = open(self.fhdir, 'r')
+        stack = pickle.load(fh)
+        set_stack(stack)
+        fh.close()
+    
+    def get_stack_to_file(self):
+        stack = [v for v in self.get_stack()]
+        fh = open(self.fhdir, 'w')
+        stack = pickle.dump(stack, fh)
+        fh.close()

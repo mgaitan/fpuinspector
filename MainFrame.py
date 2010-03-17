@@ -6,14 +6,19 @@ import wx
 
 import os       # vamos a manejar archivos y directorios
 import pickle   #serialización de datos para trabajar con pickle
+from multiprocessing.managers import BaseManager
+
 
 from AboutFrame import AboutFrame
 from myWidgets import InstructionListCtrl, RegisterListCtrl, TextCtrlAutoComplete
-
 from helpers import *
 from wrapper import Wrapper
 
-from singleton import BufferStack
+class MyManager(BaseManager):
+    pass
+
+MyManager.register('Wrapper', Wrapper)
+
 
 
 _path = os.path.abspath(os.path.dirname(__file__)) 
@@ -71,7 +76,10 @@ class MainFrame(wx.Frame):
         
         
         #libreria de interfaz con C
-        self.lib = Wrapper()
+        self.manager = MyManager()    #mediante un proxy que desacopla el wrapper en otro proceso (¡Viva python!)
+        self.manager.start()        
+        self.lib = self.manager.Wrapper()
+
         implementadas = self.lib.get_valid_instructions()
         #input de instrucciones
         self.instructionInput = TextCtrlAutoComplete(self, "", style=wx.TE_PROCESS_ENTER|wx.TE_PROCESS_TAB, choices=implementadas)
@@ -124,7 +132,6 @@ class MainFrame(wx.Frame):
         self.filename = None
         self.modificado = False
 
-        self.buffer_stack = BufferStack()   #singleton
         
         
     def __set_properties(self):
@@ -389,12 +396,13 @@ class MainFrame(wx.Frame):
         self.statusList.DeleteAllItems()
         self.statusList.Append(int2bin(status_val))
     
-    def actionRefreshStack(self, event):
+    def actionRefreshStack(self, event=None):
         stack = self.lib.get_stack()
         self.stackList.DeleteAllItems()
+        #stack = [10.8, 10, 0, 0, 0, 0, 0, 1]
         for n,val in enumerate(stack):
-            self.stackList.Append([u'ST%i' % n, unicode(val), u''])
-            #self.stackGrid.SetCellValue(n,1,unicode(val.hex()))
+            self.stackList.Append([u'%i' % n, unicode(val), u''])
+        #self.lib.set_stack(stack)
         
         
         
@@ -425,10 +433,10 @@ class MainFrame(wx.Frame):
             # Open the file, read the contents and set them into
             # the text edit window
             filehandle=open(os.path.join(self.dirname, self.filename),'r')
-            list = pickle.load(filehandle)
+            lista = pickle.load(filehandle)
             
             #update list
-            self.instructionsList.updateList(list)
+            self.instructionsList.updateList(lista)
 
             filehandle.close()
 

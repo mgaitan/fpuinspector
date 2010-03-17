@@ -4,8 +4,7 @@ import platform #para detectar sistema operativo
 import inspect #para generar las instrucciones válidas
 import os
 
-from singleton import BufferStack
-
+import pickle
 
 class Wrapper:
     def __init__(self):
@@ -16,8 +15,7 @@ class Wrapper:
         elif platform.system()=='Windows':
             self.lib = cdll.WinDLL('%s/libfpu.dll' % os.path.abspath(os.path.dirname(__file__)) ) #TODO
         
-        self.buffer_stack = BufferStack()   #singleton
-
+        
     def get_control(self):
         return self.lib.get_control()
     
@@ -25,38 +23,34 @@ class Wrapper:
         return self.lib.get_estado()
     
 
+    def set_stack_from_file(self):
+        fh = open('stack.tmp', 'r')
+        stack = pickle.load(fh)
+        set_stack(stack)
+        fh.close()
+    
+    def get_stack_to_file(self):
+        stack = [v for v in self.get_stack()]
+        fh = open('stack.tmp', 'w')
+        stack = pickle.dump(stack, fh)
+        fh.close()
+
+
     def get_stack(self):
         """retorna un array con los valores del stack"""
         space = c_double * 8
         pila = space()
-        #self.lib.save_contexto()
         ok = self.lib.get_pila(pila)
-        #self.lib.restore_contexto()
-        print [val for val in pila]
-        pila_al_vesre = []   #extraigo todos los valores de la pila y los meto de nuevo.
-        for valor in pila:
+        self.set_stack(pila)
+        return [val for val in pila] 
+    
+    def set_stack(self, stack):
+        pila_al_vesre = []   
+        for valor in stack:
             #print valor
             pila_al_vesre.insert(0,valor) #invierto el iterable en una lista
         for valor in pila_al_vesre:
             self.FLD(valor)
-        return pila #update buffer
-
-    def update_buffer_stack(self):
-        """retorna un array con los valores del stack"""
-        space = c_double * 8
-        pila = space()
-        ok = self.lib.get_pila(pila)
-        self.buffer_stack.set_value(pila) #update buffer
-        
-    def set_buffer_stack(self):
-        pila = self.buffer_stack.get_value()
-        pila_al_vesre = []   #extraigo todos los valores de la pila y los meto de nuevo.
-        for valor in pila:
-            #print valor
-            pila_al_vesre.insert(0,valor) #invierto el iterable en una lista
-        for valor in pila_al_vesre:
-            self.FLD(valor)
-        #return pila
         
 
     def reset(self):
