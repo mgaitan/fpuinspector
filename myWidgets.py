@@ -25,6 +25,11 @@ class InstructionListCtrl(wx.ListCtrl):
             list.append(row)
         return list
 
+    def select_next(self, current):
+        next = []
+        if current + 1 <= self.GetItemCount():
+            next.append(current + 1)
+        self.updateList(self.get_list(), next)
     
     def get_selected_items(self):
         """
@@ -54,6 +59,8 @@ class InstructionListCtrl(wx.ListCtrl):
                                 wx.LIST_STATE_SELECTED) 
     
     def updateList(self, list, selected=[]):
+        """reeplaza las intrucciones dadas por list y marca como seleccionadas
+        las que se indiquen en selected"""
         self.DeleteAllItems()
         for row in list:
             self.Append(row)
@@ -97,54 +104,49 @@ class InstructionListCtrl(wx.ListCtrl):
         if len(selected) == 0:
             self.statusbar.SetStatusText("no hay instrucciones seleccionadas", 0)
             return
-        list = self.get_list()
+        lista = self.get_list()
         for sel in selected:
             if sel != 0:
-                item = list.pop(sel)
-                list.insert(selected.index(sel),item)
+                item = lista.pop(sel)
+                lista.insert(selected.index(sel),item)
         newselected = [i for i in range(self.num_selected_items())]
-        self.updateList(list, newselected)
+        self.updateList(lista, newselected)
         
         
         
     def move_down(self):
         """sube un nivel las filas seleccionadas"""
         selected = self.get_selected_items()
-        list = self.get_list()
+        lista = self.get_list()
         last = self.GetItemCount() - 1
         for sel in selected:
             if sel != last:
-                item = list.pop(sel)
-                list.insert(sel+1,item)
-        self.updateList(list)
+                item = lista.pop(sel)
+                lista.insert(sel+1,item)
+        self.updateList(lista)
         newselected = [sel+1 for sel in selected if sel != last]
-        self.updateList(list, newselected)
+        self.updateList(lista, newselected)
 
     def move_bottom(self):
         """agrupa y sube las instrucciones al tope de la lista"""
         selected = self.get_selected_items()
-        list = self.get_list()
+        lista = self.get_list()
         last = self.GetItemCount() - 1
         for sel in selected:
             if sel != last:
-                item = list.pop(sel)
-                list.append(item)
+                item = lista.pop(sel)
+                lista.append(item)
         newselected = [self.self.GetItemCount()-i for i in range(self.num_selected_items())]
-        self.updateList(list, newselected)
+        self.updateList(lista, newselected)
         
     def delete(self):
         """elimina las instrucciones seleccionadas"""
         selected = self.get_selected_items()
-        list = self.get_list()
+        lista = self.get_list()
         for sel in selected:
-            list.pop(sel)
-        self.updateList(list)
+            lista.pop(sel)
+        self.updateList(lista)
 
-    def run_from_selected(self):
-        #TODO todo to-do
-        """ejecuta desde la primera instrucción seleccionada o desde el inicio"""
-        run_from = self.get_selected_items()[0] or 0
-        
         
                 
 

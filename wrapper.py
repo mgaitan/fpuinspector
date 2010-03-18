@@ -7,8 +7,46 @@ import os
 import pickle
 
 class Wrapper:
+""" Interfaz con la biblioteca dinámica C que es un intermediario hacia rutinas de ensamblador  
+Cada instrucción de FPU implementada en bajo nivel tiene su acceso desde un objeto Wrapper
+
+Para mantener la coherencia del estado interno del procesador, un objeto Wrapper()
+se gestiona a través de un proxy de multiproceso, del paquete multiproccess 
+incorporado en Python 2.6
+
+Del módulo MainFrame podemos ver:
+
+
+  ``
+    import Wrapper
+    from multiprocessing.managers import BaseManager
+
+
+    class MyManager(BaseManager):
+        pass
+    MyManager.register('Wrapper', Wrapper)
+    
+    
+    manager = MyManager()  
+    manager.start()        
+    lib = self.manager.Wrapper()
+    
+self.lib es un objeto wrapper, que tiene acceso a todo los métodos de este objeto
+pero interfaseado por el objeto manager, que es, en efecto, otro proceso. 
+
+De esta manera el objeto wrapper mantiene una coherencia persistente del estado 
+del FPU y el programa en general (con su GUI, que al menos en linux realiza numerosos cálculos
+de punto flotante) otro. 
+
+Es el sistema operativo el encargado de entregar a cada proceso su estado previo
+cuando el CPU le es asignado, permaneciendo inmune a la interferencia que producen
+dos tareas de un mismo proceso.
+
+Brillante esta tarjeta!
+
+"""
+
     def __init__(self):
-        # load the shared object
         if platform.system()=='Linux':
 
             self.lib = cdll.LoadLibrary('%s/libfpu.so.1.0' % os.path.abspath(os.path.dirname(__file__)) ) # % os.path.dirname( __file__ ))
@@ -165,16 +203,17 @@ class Wrapper:
 
 
     #HELPERS
-    def is_valid(self,line):
+    def run_or_test_instruction(self,line, run=False):
         """
-        se fija si la instrucción ingresada es válida
+        En modo run=False se fija si la instrucción ingresada es válida
+        En modo run=True ejecuta la instrucción.
         """
         
         line = line.replace(',',' ')
         commlista = line.split()
         comm = commlista[0]
         params = [c+", " for c in commlista[1:]]
-        commline = "self.%s(%s run=False)" % (comm, "".join(params))
+        commline = "self.%s(%s run=%s)" % (comm, "".join(params), run)
         print commline
         try:
             #run=False just check the call is right but do nothing

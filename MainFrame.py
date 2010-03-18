@@ -375,13 +375,22 @@ class MainFrame(wx.Frame):
 
 
     def actionRunNext(self, event): # wxGlade: MainFrame.<event_handler>
-        print "Event handler `actionRunNext' not implemented!"
+        """ejecuta desde la primera instrucción seleccionada o desde el inicio"""
+        sel_items = self.instructionsList.get_selected_items()
+        if len(sel_items)>0:
+            run_from = sel_items[0]
+        else:
+            run_from = 0
+        instruction = self.instructionsList.get_list()[run_from][0]
+        self.lib.run_or_test_instruction(instruction, True)
+        self.actionRefreshAll(event)
+        self.instructionsList.select_next(run_from)
 
     def actionRefreshAll(self, event=None): # wxGlade: MainFrame.<event_handler>
-        #self.actionRefreshControl(event)
-        #self.actionRefreshStatus(event)
+        self.actionRefreshControl(event)
+        self.actionRefreshStatus(event)
         self.actionRefreshStack(event)
-        #self.updateStatusBar(u"Registros y pila actualizados")
+        self.updateStatusBar(u"Registros y pila actualizados")
         
     
     def actionRefreshControl(self, event):
@@ -409,7 +418,7 @@ class MainFrame(wx.Frame):
   
     def actionAdd(self, event): # wxGlade: MainFrame.<event_handler>
         instruccion = self.instructionInput.GetValue().upper()
-        if self.lib.is_valid(instruccion):
+        if self.lib.run_or_test_instruction(instruccion):
             self.instructionsList.Append([instruccion])
             self.instructionInput.SetValue('')
             self.instructionInput.SetFocus()

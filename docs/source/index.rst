@@ -58,7 +58,7 @@ matemático se divide en 2 bloques principales, como  se muestra en l
 * **Unidad de Ejecución Numérica (NEU)**: Responsable de la ejecución de las 
     instrucciones  del coprocesador.
 
-.. figure:: fig1.jpg
+.. figure:: ./fig1.jpg
    :alt: Arquitectura de la unidad de punto flotante
     
     Arquitectura de la unidad de punto flotante
@@ -84,36 +84,34 @@ misma y la interacción con los  registros del coprocesador.
 * **Registro de estado**: Indica la situación actual de la FPU. Éste es un 
 registro de 16 bits cuya  distribución es la siguiente:
 
-.. fig: _static/reg_estado.jpg
-    align: center
-    alt: Registro de Estado
+.. figure:: ./reg_estado.jpg
+    :alt: Registro de Estado
     
     Registro de estado
 
     
 ==== ========================================
-bit     Descripción
+bit  Descripción
 ==== ========================================
-B     Indica si el coprocesador está ocupado.
-C0­C3  Bit del código de condición. 
-TOP   Indica la cima de la pila (primer registro activo). 
-ES    Bit de resumen de errores. 
-SF    Bit de operación invalida. 
-PE    Bit de error de precisión.  
-UE    Bit de error de underflow (resultado demasiado pequeño para ser representado) 
-OE    Bit de error de overflow (resultado demasiado grande para ser representado) 
-ZE    Bit de error de división por cero. 
-DE    Bit de error de operando no normalizado 
-IE    Bit de error de operación invalida. 
+B    Indica si el coprocesador está ocupado.
+C0­C3 Bit del código de condición. 
+TOP  Indica la cima de la pila (primer registro activo). 
+ES   Bit de resumen de errores. 
+SF   Bit de operación invalida. 
+PE   Bit de error de precisión.  
+UE   Bit de error de underflow (resultado demasiado pequeño para ser representado) 
+OE   Bit de error de overflow (resultado demasiado grande para ser representado) 
+ZE   Bit de error de división por cero. 
+DE   Bit de error de operando no normalizado 
+IE   Bit de error de operación invalida. 
 ==== ========================================
  
 
 * **Registro de control**: Controla la precisión de la FPU y los métodos de redondeo. 
     La distribución de los bits que constituyen éste registro es la siguiente:
 
-.. fig: _static/reg_estado.jpg
-    align: center
-    alt: Registro de Estado
+.. figure:: ./reg_estado.jpg
+    :alt: Registro de Estado
     
     Registro de estado
 
@@ -123,7 +121,7 @@ IE    Bit de error de operación invalida.
 Cada etiqueta puede tomar  uno de los cuatro valores posibles: 
 
 == ============
-00 Valor valido 
+00 Valor válido 
 01 Valor cero 
 10 Valor inválido o infinito 
 11 Vacío 
@@ -139,9 +137,8 @@ de las últimas  instrucciones ejecutadas. Registro de 48 bits.
 * **Registro de código**:  Almacena el código de la última instrucción ejecutada 
     que no sea de  control. Registro de 11 bits. Se construye de la siguiente manera:
 
-.. fig: _static/reg_codigo.jpg
-    align: center
-    alt: Registro de código
+.. figure:: ./reg_codigo.jpg
+    :alt: Registro de código
     
     Registro de código
 
