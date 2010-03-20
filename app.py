@@ -8,7 +8,7 @@ necesario
 
 
 import wx
-from MainFrame import MainFrame
+import sys
 
 class main():
     def __init__(self):
@@ -24,5 +24,7 @@ class main():
 
 
 if __name__ == "__main__":
-    main()
-
+    try:
+        main()
+    except NameError:
+        print u'FPU Inspector requiere Python 2.6 o superior para funcionar'
