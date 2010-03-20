@@ -153,6 +153,15 @@ _fldpi:
     fldpi
     ret
 
+
+;------- FLDCW: Load Floating-Point Control Word
+segment .text    
+    global _fldcw
+_fldcw:
+    fldcw word[ebp + 2] ; 
+    ret
+
+
      
 ;------------ FCOM -------------
 segment .data
@@ -237,53 +246,35 @@ fin_fxch:
     leave       
     ret
 
+
+;------ FCHS -------
+section .text
+    global _fchs
+_fchs:
+    fchs
+    ret
+
+;------ FABS -------
+section .text
+    global _fabs
+_fabs:
+    fabs
+    ret
+
+;----- FCLEX, {FNCLEX}: Clear Floating-Point Exceptions
+section .text
+    global _fclex
+_fclex:
+    fclex
+    ret
+
+
 ;------ FADD -------
 section .text
     global _fadd
 _fadd:
     fadd
     ret
-
-;------------ FADDP -------------
-segment .data
-salto_faddp dd faddp0,faddp1,faddp2,faddp3,faddp4,faddp5,faddp6,faddp7
-segment .text
-    global _faddp
-_faddp:
-    ;performs the same function as FADD TO, but pops the register stack after storing the result.
-    enter 0,0
-    pusha
-    mov eax,[ebp + 8] ; cargo en num de registro
-    shl eax, 2 ;multimplico por 4
-    jmp [salto_faddp+eax]   
-faddp0: 
-    faddp st0
-    jmp fin_faddp
-faddp1: 
-    faddp st1
-    jmp fin_faddp
-faddp2: 
-    faddp st2
-    jmp fin_faddp
-faddp3: 
-    faddp st3
-    jmp fin_faddp
-faddp4: 
-    faddp st4
-    jmp fin_faddp
-faddp5: 
-    faddp st5
-    jmp fin_faddp
-faddp6: 
-    faddp st6
-    jmp fin_faddp
-faddp7: 
-    faddp st7   
-fin_faddp:      
-    popa
-    leave       
-    ret 
-
 
 ;------ FSUB -------
 section .text
@@ -292,54 +283,106 @@ _fsub:
     fsub
     ret
 
-
-
-;------------ FSUBP -------------
-segment .data
-salto_fsubp dd fsubp0,fsubp1,fsubp2,fsubp3,fsubp4,fsubp5,fsubp6,fsubp7
-segment .text
-    global _fsubp
-_fsubp:
-    enter 0,0
-    pusha
-    mov eax,[ebp + 8] ; cargo en num de registro
-    shl eax, 2 ;multimplico por 4
-    jmp [salto_fsubp+eax]   
-fsubp0: 
-    fsubp st0
-    jmp fin_fsubp
-fsubp1: 
-    fsubp st1
-    jmp fin_fsubp
-fsubp2: 
-    fsubp st2
-    jmp fin_fsubp
-fsubp3: 
-    fsubp st3
-    jmp fin_fsubp
-fsubp4: 
-    fsubp st4
-    jmp fin_fsubp
-fsubp5: 
-    fsubp st5
-    jmp fin_fsubp
-fsubp6: 
-    fsubp st6
-    jmp fin_fsubp
-fsubp7: 
-    fsubp st7   
-fin_fsubp:      
-    popa
-    leave       
+;------ FMUL -------
+section .text
+    global _fmul
+_fmul:
+    ;FMUL multiplies ST0 by the given operand, and stores the result in ST0
+    fmul
     ret
+
+
+;------ FDIV -------
+section .text
+    global _fdiv
+_fdiv:
+    ;FDIV divides ST0 by the given operand and stores the result back in ST0
+    fdiv
+    ret
+
+;------ FPREM Floating-Point Partial Remainder
+section .text
+    global _fprem
+_fprem:
+    ;produce the remainder obtained by dividing ST0 by ST1.
+    fprem
+    ret
+
+;------ FSCALE Scale Floating-Point Value by Power of Two
+section .text
+    global _fscale
+_fscale:
+    ;FSCALE scales a number by a power of two: it rounds ST1 towards zero 
+    ;to obtain an integer, then multiplies ST0 by two to the power of that 
+    ;integer, and stores the result in ST0. 
+    fscale
+    ret
+
+;------ FXTRACT Extract Exponent and Significand
+section .text
+    global _fxtract
+_fxtract:
+    fxtract
+    ret
+
+
+
+;------------ FSIN -------------
+segment .text
+    global _fsin
+_fsin:
+    ;FSINCOS does the same, but then pushes the cosine of the same value 
+    ;on the register stack, so that the sine ends up in ST1 and the cosine in ST0.
+    fsin 
+    ret 
+
+;------------ FCOS -------------
+segment .text
+    global _fcos
+_fcos:
+    ;FSINCOS does the same, but then pushes the cosine of the same value 
+    ;on the register stack, so that the sine ends up in ST1 and the cosine in ST0.
+    fcos 
+    ret 
+
+
 ;------------ FSINCOS -------------
 segment .text
     global _fsincos
 _fsincos:
-    ;FSINCOS does the same, but then pushes the cosine of the same value 
+    ;FSINCOS does the same as FSIN, but then pushes the cosine of the same value 
     ;on the register stack, so that the sine ends up in ST1 and the cosine in ST0.
     fsincos 
     ret 
+
+;------------ FPTAN
+segment .text
+    global _fptan
+_fptan:
+    ;FPTAN computes the tangent of the value in ST0 (in radians), and stores the result back into ST0. 
+    fptan 
+    ret 
+
+
+;------------ FPTAN
+segment .text
+    global _fpatan
+_fpatan:
+    ;FPTAN computes the tangent of the value in ST0 (in radians), and stores the result back into ST0. 
+    fpatan 
+    ret 
+
+
+;--------FRNDINT
+segment .text
+    global _frndint
+_frndint:
+    ;FRNDINT rounds the contents of ST0 to an integer, according to the current 
+    ;rounding mode set in the FPU control word, and stores the result back in ST0.
+    frndint
+    ret
+
+
 ;------------ FYL2X -------------
 segment .text
     global _fyl2x

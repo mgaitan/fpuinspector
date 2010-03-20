@@ -159,64 +159,78 @@ class MainFrame(wx.Frame):
         self.instructionsList.SetColumnWidth(0,220)
         
         registro_estado = [('IE',u'Bit de error de operación inválida',
-                        u'Indica una operación inválida: desbordamiento \
-                        de la pila, un valor indeterminado, raíz \
-                        cuadrada de número negativo,..'),
+                        u'Indica una operación inválida: desbordamiento '
+                        u'de la pila, un valor indeterminado, raíz '
+                        u'cuadrada de número negativo,..'),
                         ('DE',u'Bit de error de operando no normalizado',
-                        u'Indica que al menos uno de los operandos \
-                        no está normalizado.'),
+                        u'Indica que al menos uno de los operandos no está normalizado.'),
                         ('ZE',u'Bit de error de división por cero',
                         u'Indica una división por cero.'),
-                        ('OE',u'Bit de error de overflow',u'Indica \
-                        un error de desbordamiento (resultado \
-                        demasiado grande para ser representado).'),
-                        ('UE', u'Bit de erro de underflow', u'Indica \
-                        un error de subflujo (resultado diferente a 0 \
-                        que es demasiado pequeño para ser representado \
-                        con la precisión actual seleccionada por \
-                        la palabra de control).'),
-                        ('PE', u'Bit de error de precisión', u'Indica \
-                        que el resultado o los operandos exceden \
-                        la precisión seleccionada.'),
-                        ('SF', u'Bit de operación inválida', u'Diferencia \
-                        entre las operaciones inválidas al interpretar \
-                        los bits del código de condición.'),
-                        ('ES', u'Bit de resumen de errores', u'Si está a 1, \
-                        indica que cualquiera de los bits de error \
-                        no enmascarado está a 1.'),
-                        ('TOP0', u'Campo de tope o cima de pila', 
-                        u'Muestra el primer registro activo de la pila \
-                        (registro actualmente diseccionado como registro \
-                        superior de la pila (ST)).'),
-                        ('TOP1', u'Campo de tope o cima de pila', 
-                        u'Muestra el primer registro activo de la pila \
-                        (registro actualmente diseccionado como registro \
-                        superior de la pila (ST)).'),
-                        ('C0', u'Bits del código de condición', 
-                        u'indican condiciones del coprocesador, resultado \
-                        de operaciones aritméticas y de comparación \
-                        en coma flotante. Utilizados para el tratamiento \
-                        de excepciones.'),
-                        ('C1', u'Bits del código de condición', 
-                        u'indican condiciones del coprocesador, resultado \
-                        de operaciones aritméticas y de comparación \
-                        en coma flotante. Utilizados para el tratamiento \
-                        de excepciones.'),
-                        ('C2', u'Bits del código de condición', 
-                        u'indican condiciones del coprocesador, resultado \
-                        de operaciones aritméticas y de comparación \
-                        en coma flotante. Utilizados para el tratamiento \
-                        de excepciones.'),
-                        ('C3', u'Bits del código de condición', 
-                        u'indican condiciones del coprocesador, resultado \
-                        de operaciones aritméticas y de comparación \
-                        en coma flotante. Utilizados para el tratamiento \
-                        de excepciones.'),
-                        ('B',u'Bit de ocupado', u'Indica que el coprocesador \
-                        está ocupado realizando una tarea. Los coprocesadores \
-                        actuales no necesitan verificar este bit, ya que se \
-                        sincronizan automáticamente con el microprocesador.'),
-                        ('X',u'Bit reservado', u'')]
+                        ('OE',
+                         u'Bit de error de overflow',
+                         u'Indica un error de desbordamiento (resultado demasiado'
+                         u' grande para ser representado).'),
+                        ('UE', 
+                         u'Bit de erro de underflow', 
+                         u'Indica un error de subflujo (resultado diferente a 0 '
+                         u'que es demasiado pequeño para ser representado '
+                         u'con la precisión actual seleccionada por la palabra de control).'),
+                        ('PE', 
+                         u'Bit de error de precisión', 
+                         u'Indica que el resultado o los operandos exceden '
+                         u'la precisión seleccionada.'),
+                        ('SF', 
+                         u'Bit de operación inválida', 
+                         u'Diferencia entre las operaciones inválidas al '
+                         u'interpretar los bits del código de condición.'),
+                        ('ES', 
+                         u'Bit de resumen de errores', 
+                         u'Si está a 1, indica que cualquiera de los bits de '
+                         u'error no enmascarado está a 1.'),
+                        ('C0', 
+                         u'Bits del código de condición', 
+                         u'indican condiciones del coprocesador, '
+                         u'resultado de operaciones aritméticas y de comparación '
+                         u'en punto flotante. Utilizados para el tratamiento '
+                         u'de excepciones.'),
+                        ('C1', 
+                         u'Bits del código de condición', 
+                         u'indican condiciones del coprocesador, resultado '
+                         u'de operaciones aritméticas y de comparación '
+                         u'en coma flotante. Utilizados para el tratamiento '
+                         u'de excepciones.'),
+                        ('C2', 
+                        u'Bits del código de condición', 
+                        u'indican condiciones del coprocesador, resultado '
+                        u'de operaciones aritméticas y de comparación en punto ' 
+                        u'flotante. Utilizados para el tratamiento de excepciones.'),
+                        
+                        ('TOP0', 
+                         u'Campo de tope o cima de pila', 
+                         u'Muestra el primer registro activo de la pila '
+                         u'(registro actualmente diseccionado como registro '
+                         u'superior de la pila (ST)).'),
+                        ('TOP1', 
+                         u'Campo de tope o cima de pila', 
+                         u'Muestra el primer registro activo de la pila '
+                         u'(registro actualmente diseccionado como registro '
+                         u'superior de la pila (ST)).'),
+                        ('TOP2', 
+                         u'Campo de tope o cima de pila', 
+                         u'Muestra el primer registro activo de la pila '
+                         u'(registro actualmente diseccionado como registro '
+                         u'superior de la pila (ST)).'),
+                        ('C3', 
+                        u'Bits del código de condición', 
+                        u'indican condiciones del coprocesador, resultado '
+                        u'de operaciones aritméticas y de comparación en punto' 
+                        u'flotante. Utilizados para el tratamiento de excepciones.'),
+                        ('B',
+                         u'Bit de ocupado', 
+                         u'Indica que el coprocesado está ocupado realizando '
+                         u'una tarea. Los coprocesadores actuales no necesitan '
+                         u'verificar este bit, ya que se sincronizan automáticamente '
+                         u'con el microprocesador.'),]
             
         registro_control = [('IM',u'Máscara de operación inválida',''),
                         ('DM',u'Máscara de operando no normalizado',''),
@@ -226,20 +240,19 @@ class MainFrame(wx.Frame):
                         ('PE', u'Máscara de error de precisión', ''),
                         ('', '', ''),
                         ('', '', ''),
-                        ('PC0', u'Control de precisión', u'00: precisión sencilla\n\
-                        01:Reservado\n10:Doble precisión (largo)\n\
-                        11: Precisión extendida (temporal)'),
-                        ('PC1', u'Control de precisión', u'00: precisión sencilla\n\
-                        01:Reservado\n10:Doble precisión (largo)\n\
-                        11: Precisión extendida (temporal)'),
-                        ('RC0', u'Control de redondeo', u'00:redondeo al más cercano o par\n\
-                        01:Redondeo hacia abajo\n10:Redondeo hacia arriba\n\
-                        11: Trunca'),
-                        ('RC1', u'Control de redondeo', u'00:redondeo al más cercano o par\n\
-                        01:Redondeo hacia abajo\n10:Redondeo hacia arriba\n\
-                        11: Trunca'),
-                        ('IC', u'Control de infinito', 
-                        u'0: Proyectivo\n1: Afin'),
+                        ('PC0', u'Control de precisión', u'\n00: precisión sencilla\n'
+                        u'01:Reservado\n10:Doble precisión (largo)\n'
+                        u'11: Precisión extendida (temporal)'),
+                        ('PC1', u'Control de precisión', u'\n00: precisión sencilla\n'
+                        u'01:Reservado\n10:Doble precisión (largo)\n'
+                        u'11: Precisión extendida (temporal)'),
+                        ('RC0', u'Control de redondeo', u'\n00:redondeo al más cercano o par\n'
+                        u'01:Redondeo hacia abajo\n10:Redondeo hacia arriba\n'
+                        u'11: Trunca'),
+                        ('RC1', u'Control de redondeo', u'\n00:redondeo al más cercano o par\n'
+                        u'01:Redondeo hacia abajo\n10:Redondeo hacia arriba\n'
+                        u'11: Trunca'),
+                        ('IC', u'Control de infinito', u'\n0: Proyectivo\n1: Afin'),
                         ('', '', ''),
                         ('', '', ''),
                         ('', '', ''),
@@ -254,7 +267,7 @@ class MainFrame(wx.Frame):
         
         #grid de pila
         
-        stack_cols = ('ST', 'Float', 'Binario')
+        stack_cols = ('ST', 'Float', 'Etiqueta')
         for n,col in enumerate(stack_cols):
             self.stackList.InsertColumn(n,col)
         self.stackList.SetColumnWidth(0,30)

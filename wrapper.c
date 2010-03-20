@@ -21,6 +21,9 @@ extern void PRE_CDECL _finit( void ) POST_CDECL;
 extern void PRE_CDECL _ffree( int ) POST_CDECL;
 
 
+extern void PRE_CDECL _fld( double) POST_CDECL;
+
+
 
 extern void PRE_CDECL _fld1( void) POST_CDECL;
 extern void PRE_CDECL _fldl2e( void ) POST_CDECL;
@@ -30,15 +33,38 @@ extern void PRE_CDECL _fldln2( void ) POST_CDECL;
 extern void PRE_CDECL _fldlpi( void ) POST_CDECL;
 extern void PRE_CDECL _fldz( void ) POST_CDECL;
 
+extern void PRE_CDECL _fldcw( int ) POST_CDECL;
+
+extern void PRE_CDECL _fclex( void ) POST_CDECL;
+
 
 extern void PRE_CDECL _finit( void ) POST_CDECL;
 extern void PRE_CDECL _fcom (int n) POST_CDECL;
 extern void PRE_CDECL _fxch(int n) POST_CDECL;
-extern void PRE_CDECL _faddp(int n) POST_CDECL;
+
+extern void PRE_CDECL _fchs( void ) POST_CDECL;
+extern void PRE_CDECL _fabs( void ) POST_CDECL;
+
 extern void PRE_CDECL _fadd( void ) POST_CDECL;
-extern void PRE_CDECL _fsubp(int n) POST_CDECL;
 extern void PRE_CDECL _fsub( void ) POST_CDECL;
+extern void PRE_CDECL _fmul( void ) POST_CDECL;
+extern void PRE_CDECL _fdiv( void ) POST_CDECL;
+extern void PRE_CDECL _fprem( void ) POST_CDECL;
+
+extern void PRE_CDECL _fscale( void ) POST_CDECL;
+
+extern void PRE_CDECL _fxtract( void ) POST_CDECL;
+
+
+extern void PRE_CDECL _fsin(void) POST_CDECL;
+extern void PRE_CDECL _fcos(void) POST_CDECL;
 extern void PRE_CDECL _fsincos(void) POST_CDECL;
+extern void PRE_CDECL _fptan(void) POST_CDECL;
+extern void PRE_CDECL _fpatan(void) POST_CDECL;
+
+
+extern void PRE_CDECL _frndint(void) POST_CDECL;
+
 extern void PRE_CDECL _fyl2x(void) POST_CDECL;
 extern void PRE_CDECL _fsqrt(void) POST_CDECL;
 
@@ -109,6 +135,14 @@ void fld(double val){
     //save_contexto();
 }
 
+
+void fldcw(double controlword){
+   _fldcw(controlword);
+}
+
+
+
+
 void fld1(){ _fld1();}
 void fldl2e(){ _fldl2e();}
 void fldl2t(){ _fldl2t();}
@@ -120,34 +154,46 @@ void fldz(){ _fldz();}
 
 
 
-void fcom(int n){
-    _fcom(n);
-}
+void fcom(int n){  _fcom(n);}
 
-void fxch(int n){
-    _fxch(n);
-}
-
-void fadd(){
-    _fadd();
-}
+void fxch(int n){  _fxch(n);}
 
 
+void fclex(){ _fclex(); }
+
+void fchs(){ _fchs(); }
+void fabs_(){ _fabs(); }
+
+void fadd(){ _fadd(); }
+void fsub(){ _fsub(); }
+void fmul(){ _fmul(); }
+void fdiv(){ _fdiv(); }
+
+void fprem(){ _fprem(); }
+
+
+void fscale(){ _fscale(); }
+
+
+void fxtract(){ _fxtract(); } POST_CDECL;
+
+
+/*
 void faddp(int n){
     _faddp(n);
 }
+*/
 
-void fsub(){
-    _fsub();
-}
 
-void fsubp(int n){
-    _fsubp(n);
-}
+void fsincos(){ _fsincos(); }
+void fcos(){ _fcos(); }
+void fsin(){ _fsin(); }
+void fptan(){ _fptan(); }
+void fpatan(){ _fpatan(); }
 
-void fsincos(){
-    _fsincos();
-}
+void frndint(){ _frndint(); }
+
+
 
 void fyl2x(){
     _fyl2x();

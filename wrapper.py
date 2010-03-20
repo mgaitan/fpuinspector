@@ -7,44 +7,44 @@ import os
 import pickle
 
 class Wrapper:
-""" Interfaz con la biblioteca dinámica C que es un intermediario hacia rutinas de ensamblador  
-Cada instrucción de FPU implementada en bajo nivel tiene su acceso desde un objeto Wrapper
+    """ Interfaz con la biblioteca dinámica C que es un intermediario hacia rutinas de ensamblador  
+    Cada instrucción de FPU implementada en bajo nivel tiene su acceso desde un objeto Wrapper
 
-Para mantener la coherencia del estado interno del procesador, un objeto Wrapper()
-se gestiona a través de un proxy de multiproceso, del paquete multiproccess 
-incorporado en Python 2.6
+    Para mantener la coherencia del estado interno del procesador, un objeto Wrapper()
+    se gestiona a través de un proxy de multiproceso, del paquete multiproccess 
+    incorporado en Python 2.6
 
-Del módulo MainFrame podemos ver:
-
-
-  ``
-    import Wrapper
-    from multiprocessing.managers import BaseManager
+    Del módulo MainFrame podemos ver:
 
 
-    class MyManager(BaseManager):
-        pass
-    MyManager.register('Wrapper', Wrapper)
-    
-    
-    manager = MyManager()  
-    manager.start()        
-    lib = self.manager.Wrapper()
-    
-self.lib es un objeto wrapper, que tiene acceso a todo los métodos de este objeto
-pero interfaseado por el objeto manager, que es, en efecto, otro proceso. 
+      ``
+        import Wrapper
+        from multiprocessing.managers import BaseManager
 
-De esta manera el objeto wrapper mantiene una coherencia persistente del estado 
-del FPU y el programa en general (con su GUI, que al menos en linux realiza numerosos cálculos
-de punto flotante) otro. 
 
-Es el sistema operativo el encargado de entregar a cada proceso su estado previo
-cuando el CPU le es asignado, permaneciendo inmune a la interferencia que producen
-dos tareas de un mismo proceso.
+        class MyManager(BaseManager):
+            pass
+        MyManager.register('Wrapper', Wrapper)
+        
+        
+        manager = MyManager()  
+        manager.start()        
+        lib = self.manager.Wrapper()
+        
+    self.lib es un objeto wrapper, que tiene acceso a todo los métodos de este objeto
+    pero interfaseado por el objeto manager, que es, en efecto, otro proceso. 
 
-Brillante esta tarjeta!
+    De esta manera el objeto wrapper mantiene una coherencia persistente del estado 
+    del FPU y el programa en general (con su GUI, que al menos en linux realiza numerosos cálculos
+    de punto flotante) otro. 
 
-"""
+    Es el sistema operativo el encargado de entregar a cada proceso su estado previo
+    cuando el CPU le es asignado, permaneciendo inmune a la interferencia que producen
+    dos tareas de un mismo proceso.
+
+    Brillante esta tarjeta!
+
+    """
 
     def __init__(self):
         if platform.system()=='Linux':
@@ -96,7 +96,8 @@ Brillante esta tarjeta!
     
     ##### INSTRUCCIONES IMPLEMENTADAS ######
     
-    def FINIT(self,run=True):
+    def _FINIT(self,run=True):
+        #not necessary
         """initialises the FPU to its default state. It flags all registers as empty, although it does not actually change their values. """
         if run:
             self.lib.finit()    
@@ -110,6 +111,14 @@ Brillante esta tarjeta!
         """loads a floating-point value out of the given register or memory location, and pushes it on the FPU register stack"""
         if run:
             self.lib.fld(c_double(n))
+
+    def _FLDCW(self, n, run=True):
+        #no devuelve el valor esperado
+        """FLDCW loads a 16-bit value out of memory and stores it into the FPU control word (governing things like the rounding mode, the precision, and the exception masks)."""
+        if run:
+            self.lib.fldcw(c_int(n))
+
+
 
     def FLD1(self, run=True):
         if run:
@@ -151,24 +160,76 @@ Brillante esta tarjeta!
         if run:
             self.lib.fxch(n)
 
+
+    def FCLEX(self, run=True):
+        """FCLEX clears any floating-point exceptions which may be pending."""
+        if run:
+            self.lib.fclex()
+            
+    def FCHS(self, run=True):
+        """FCHS negates the number in ST0: negative numbers become positive, and vice versa.  """
+        if run:
+            self.lib.fabs_()
+
+
+    def FABS(self, run=True):
+        """FABS computes the absolute value of ST0, storing the result back in ST0. """
+        if run:
+            self.lib.fabs()
+
+    def FPREM(self, run=True):
+        """FPREM produce the remainder obtained by dividing ST0 by ST1. """
+        if run:
+            self.lib.fprem()
+
+
+    def FSCALE(self, run=True):
+        """FSCALE scales a number by a power of two: it rounds ST1 towards zero 
+        to obtain an integer, then multiplies ST0 by two to the power of that integer, 
+        and stores the result in ST0. """
+        if run:
+            self.lib.fscale()
+
     def FADD(self, n=1, run=True):
         """performs the sum between st0 and st1 and stores the result in st0"""
         if run:
             self.lib.fadd()
 
+    def FXTRACT(self, run=True):
+        """FXTRACT separates the number in ST0 into its exponent and significand 
+        (mantissa), stores the exponent back into ST0, and then pushes the significand 
+        on the register stack 
+        (so that the significand ends up in ST0, and the exponent in ST1). """
+        if run:
+            self.lib.fxtract()
 
-    def FADDP(self, n=1, run=True):
+
+    def _FADDP(self, n=1, run=True):
+        #not yet implemented
         """performs the same function as FADD, but pops the register stack after storing the result."""
         if run:
             self.lib.faddp(n)
 
 
-    def FSUB(self, n=1, run=True):
+    def FSUB(self, run=True):
         """performs the rest between st0 and st1 and stores the result in st0"""
         if run:
             self.lib.fsub()
+
+    def FMUL(self, run=True):
+        """FMUL multiplies ST0 by the given operand, and stores the result in ST0"""
+        if run:
+            self.lib.fmul()
+
+    def FDIV(self, run=True):
+        """FDIV divides ST0 by the given operand and stores the result back in ST0,"""
+        if run:
+            self.lib.fdiv()
+
+
     
-    def FSUBP(self, n=1, run=True):
+    def _FSUBP(self, n=1, run=True):
+        #not yet implemented
         """performs the same function as FSUB, but pops the register stack after storing the result."""
         if run:
             self.lib.fsubp(n)
@@ -177,6 +238,32 @@ Brillante esta tarjeta!
         """FSINCOS does the same, but then pushes the cosine of the same value on the register stack, so that the sine ends up in ST1 and the cosine in ST0."""
         if run:
             self.lib.fsincos()
+
+    def FSIN(self, run=True):
+        """FSIN calculates the sine of ST0 (in radians) and stores the result in ST0"""
+        if run:
+            self.lib.fsin()
+
+    def FCOS(self, run=True):
+        """FCOS calculates the cosine of ST0 (in radians) and stores the result in ST0"""
+        if run:
+            self.lib.fcos()
+
+    def FPTAN(self, run=True):
+        """FPTAN computes the tangent of the value in ST0 (in radians), and stores the result back into ST0. """
+        if run:
+            self.lib.fptan()
+
+    def FPATAN(self, run=True):
+        """FPATAN computes the arctangent, in radians, of the result of dividing ST1 by ST0, stores the result in ST1, and pops the register stack"""
+        if run:
+            self.lib.fpatan()
+
+
+    def FRNDINT(self, run=True):
+        """FRNDINT rounds the contents of ST0 to an integer, according to the current rounding mode set in the FPU control word, and stores the result back in ST0. """
+        if run:
+            self.lib.frndint()
 
     def FYL2X(self, run=True):
         """FYL2X multiplies ST1 by the base-2 logarithm of ST0, stores the result in ST1, and pops the register stack (so that the result ends up in ST0). ST0 must be non-zero and positive."""
