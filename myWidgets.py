@@ -1,5 +1,24 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Este módulo contiene diferentes clases que sobrecargar o agregan comportamientos
+a los controles (widgets) estándar de Wx. 
+
+Por ejemplo, InstructionListCtrl incorpora métodos que manipulan el orden 
+de las filas (las intrucciones). También recibe un diccionario con el que asigna
+un ToolTip diferente para cada fila en función de la primera palabra (la intrucción
+ASM que se haya ingresado). 
+
+TextCrlAutoComplete es la clase que se instancia para la caja de texto desde 
+donde se ingresan las intrucciones. Fue escrito por Edward Flick y otros. 
+Se le asigna una lista (un diccionario en nuestro caso) de cadenas ingresadas válidas
+y produce un efecto de 'autocompleción' a medida que el usuario teclea 
+
+RegisterListCtrl permite asignar tooltips diferentes por columna, para describir
+la función de cada bit de los registros Control y Estado. 
+
+"""
 
 
 import wx

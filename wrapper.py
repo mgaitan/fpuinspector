@@ -1,4 +1,117 @@
 # -*- coding: utf-8 -*-
+
+""" 
+Interfaz con la biblioteca dinámica C que es un intermediario hacia rutinas de ensamblador  
+Cada instrucción de FPU implementada en bajo nivel tiene su acceso desde un objeto Wrapper
+
+
+Desacople en dos procesos
+-------------------------
+
+Para mantener la coherencia del estado interno del procesador, un objeto Wrapper()
+se gestiona a través de un proxy de multiproceso, del paquete multiproccess 
+incorporado en Python 2.6
+
+Del módulo MainFrame podemos ver:
+
+
+  ``
+    import Wrapper
+    from multiprocessing.managers import BaseManager
+
+    class MyManager(BaseManager):
+        pass
+    MyManager.register('Wrapper', Wrapper)    
+    
+    manager = MyManager()  
+    manager.start()        
+    lib = self.manager.Wrapper() ``
+    
+
+self.lib es un objeto wrapper, que tiene acceso a todo los métodos de este objeto
+pero interfaseado por el objeto manager, que es, en efecto, otro proceso. 
+
+De esta manera el objeto wrapper mantiene una coherencia persistente del estado 
+del FPU y el programa en general (con su GUI, que al menos en linux realiza numerosos cálculos
+de punto flotante) otro. 
+
+Es el sistema operativo el encargado de entregar a cada proceso su estado previo
+cuando el CPU le es asignado, permaneciendo inmune a la interferencia que producen
+dos tareas de un mismo proceso.
+
+Brillante esta tarjeta!
+
+Introspección
+-------------
+
+Python es un lenguaje interpretado por lo que va 'compilando' a medida que necesita
+Esto le permite maneter un total conocimiento de qué es lo que está ejecutando
+porque conoce el código. 
+
+También hay una distinción entre cadenas de documentación (en general, cada entididad
+como Clase, método o función debería tener un string inmediatamente después que la
+describa). 
+
+A través de la introspección se puede conocer cuales son los métodos que efectivamente
+existen en el código y recuperar sus cadenas de documentación. 
+Eso es lo que hace el método get_valid_instructions(): devuelve todos los métodos
+que comienzan con *F* (efe mayúscula, como empiezan todas las instrucciones 
+de ensamblador de la FPU) y su descripción, que es la línea 
+entre comilla justo debajo de la definición de cada una. 
+
+Esta lista de instrucciones es la que se despliega al usuario como opciones 
+válidas para que este ingrese y ejecute. A su vez, su descripción (la cadena
+de documentación) se asocia en la interfaz como ToolTip de cada fila de la 
+lista de instrucciones 
+
+Con esto tenemos al menos dos ventajas: manetenemos homogeneidad total entre
+lo que se mostrará al usuario (la lista de instrucciones válidas implementadas)
+con lo que verdaderamente está disponible en el código, y por otro lado
+manetenemos el código debidamente comentado y brindamos mejor usabilidad al usuario
+sin doble trabajo!
+
+Validación de Instrucciones
+---------------------------
+El método *run_or_test_instruction* verifica que la intrucción que el usuario
+ingresa y posteriormente se ejecutará (se enviará a C y a través de este a ASM)
+sea válida. 
+
+Para eso utiliza una forma, no poco ingeniosa, idea de Leonardo Rocha en su 
+_fpu8087sim
+
+Se basa en la sentencia `exec` que permite recibir una "cadena de caracteres" 
+y la intenta ejecutar como código python. Si la ejecución es exitosa, quiere 
+decir que lo que el usuario ingresó es válido. 
+
+Para evitar que efectivamente se ejecute sobre la FPU una intrucción cuando se 
+ingresa, en modo Test se agrega una bandera `run=False`. Cada método de intrucción
+verifica esta bandera y en caso de ser falso, no realiza ninguna operación. 
+
+Ejemplo de flujo: 
+
+#.  El usuario ingresa 'FINIT'
+#.  El método convierte esta cadena a `self.FINIT( run=False)` e intenta ejecutarlo
+#.  Como el metodo FINIT(run=False) no existe en el contexto de la clase Wrapper
+    el resultado de la ejecución desencadenará una excepción que se canaliza
+    en el `except` y devuelve False, indicando que la intrucción no es válida
+
+Otro ejemplo:
+
+#.  El usuario ingresa 'FLD 3.1416'
+#.  El método convierte la cadena a `self.FLD(3.1416, run=False)` y ejecuta
+#.  Como el método está definido y los parámetros son válidos, el resultado es 
+    verdadero. 
+
+Este mismo método es el que invoca actionRunNext (en MainFrame.py) pero con 
+run=True para ejecutar efectivamente las intrucciones. 
+
+
+
+
+.. _fpu8087sim : http://code.google.com/p/fpu8087sim
+"""
+
+
 from ctypes import * #para interfaz con C
 import platform #para detectar sistema operativo
 import inspect #para generar las instrucciones válidas
@@ -7,48 +120,8 @@ import os
 import pickle
 
 class Wrapper:
-    """ Interfaz con la biblioteca dinámica C que es un intermediario hacia rutinas de ensamblador  
-    Cada instrucción de FPU implementada en bajo nivel tiene su acceso desde un objeto Wrapper
-
-    Para mantener la coherencia del estado interno del procesador, un objeto Wrapper()
-    se gestiona a través de un proxy de multiproceso, del paquete multiproccess 
-    incorporado en Python 2.6
-
-    Del módulo MainFrame podemos ver:
-
-
-      ``
-        import Wrapper
-        from multiprocessing.managers import BaseManager
-
-
-        class MyManager(BaseManager):
-            pass
-        MyManager.register('Wrapper', Wrapper)
-        
-        
-        manager = MyManager()  
-        manager.start()        
-        lib = self.manager.Wrapper()
-        
-    self.lib es un objeto wrapper, que tiene acceso a todo los métodos de este objeto
-    pero interfaseado por el objeto manager, que es, en efecto, otro proceso. 
-
-    De esta manera el objeto wrapper mantiene una coherencia persistente del estado 
-    del FPU y el programa en general (con su GUI, que al menos en linux realiza numerosos cálculos
-    de punto flotante) otro. 
-
-    Es el sistema operativo el encargado de entregar a cada proceso su estado previo
-    cuando el CPU le es asignado, permaneciendo inmune a la interferencia que producen
-    dos tareas de un mismo proceso.
-
-    Brillante esta tarjeta!
-
-    """
-
     def __init__(self):
         if platform.system()=='Linux':
-
             self.lib = cdll.LoadLibrary('%s/libfpu.so.1.0' % os.path.abspath(os.path.dirname(__file__)) ) # % os.path.dirname( __file__ ))
         elif platform.system()=='Windows':
             self.lib = cdll.WinDLL('%s/libfpu.dll' % os.path.abspath(os.path.dirname(__file__)) ) #TODO

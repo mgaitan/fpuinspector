@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Desacople en dos procesos &mdash; FPU Inspector v0.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="FPU Inspector v0.1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li><a href="index.html">FPU Inspector v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p id="module-app">Inicializador del programa. Levanta la ventana principal y el entorno
+necesario</p>
+<p id="module-MainFrame">Este es el código de la ventana principal, y el verdadero controlador del programa</p>
+<p>Contiene diferentes &#8220;widgets&#8221; (listas, cajas de texto, botones, menúes,...) que pueden producir eventos. 
+Un evento es un click, la presión de una tecla, etc. Los eventos se asociacion 
+a uno (o más) métodos de respuesta a través del método Bind() que provee wx.</p>
+<p>La aplicación de escritorio se convierte en una &#8220;aplicación orientada a eventos&#8221;
+ya que un hilo principal (el mainloop() que se ejecuta en app.py) está todo el 
+tiempo escuchando eventos y despachando al método encargado de hacer algo en 
+consecuencia (es simular a las interrupciones del procesador).</p>
+<p>Los métodos que comienzan con <em>action</em> son los que responden a eventos. Hay 
+dos grupos: los que actuan sobre la lista  de intrucciones (abrir, guardar, mover 
+o quitar instrucciones de la lista, etc) y los que actuan sobre la libreria FPU
+(refrescar pila, refrescar registros, ejecutar siguiente instruccion).</p>
+<p>El método __init__ , como en cualquier clase de Python, es el inicializador. 
+Cuando se crea un objeto MainFrame() (como el que se crea en app.py), 
+automáticamente se ejecuta este método que es el encargado de crear los elementos
+de la ventana, ubicarlos en diferentes &#8216;sizer&#8217; (que son divisiones de la ventana, 
+la manera que tiene WX de distribuir los objetos en la ventana), y darle las 
+propiedades. Para una cuestión de claridad, esas tareas se separan en dos  métodos 
+completarios (que hacen las veces de subrutinas): son _do_layout() y _set_properties()
+La mayoría de este código lo produjo la herramienta wxGlade, que sirve para 
+diseñar la ventana visualmente, como en los IDEs de Java o Visual Basic. 
+Con la ventaja que al producir código, luego se puede modificar a mano.</p>
+<p>Dos objetos importantes se instancian como atributos de un objeto MainFrame</p>
+<p>Estos son self.manager y self.lib  . El primero es un manejador del proxy 
+que separa una parte del programa (el objeto lib) en un proceso hijo.
+self.lib es un objeto Wrapper() (ver <cite>wrapper.py</cite>) instanciado a través del 
+manejador.</p>
+<p>La gestión de archivos utiliza el módulo Pickle, que es la herramienta para 
+serializar objetos de (casi) cualquier índole. En vez de tener que definir
+una estructura para el archivo, y luego tener que decodificarla, simplemente
+serializamos el contenido a guardar (los elementos de la lista de instrucciones)
+y dejamos que Pickle se encargue de escribir y de leer el archivo.</p>
+<p>Hay abundantes comentarios en el código. Espero sea de utilidad!</p>
+<dl class="class">
+<dt id="MainFrame.MyManager">
+<em class="property">
+class </em><tt class="descclassname">MainFrame.</tt><tt class="descname">MyManager</tt><big>(</big><em>address=None</em>, <em>authkey=None</em>, <em>serializer='pickle'</em><big>)</big><a class="headerlink" href="#MainFrame.MyManager" title="Permalink to this definition">¶</a></dt>
+<dd>MyManager simplemente hereda de BaseManager. Es el manejador de proxy
+que sabe crear y comunicarse con otro proceso</dd></dl>
+
+<p id="module-wrapper">Interfaz con la biblioteca dinámica C que es un intermediario hacia rutinas de ensamblador  
+Cada instrucción de FPU implementada en bajo nivel tiene su acceso desde un objeto Wrapper</p>
+<div class="section" id="desacople-en-dos-procesos">
+<h1>Desacople en dos procesos<a class="headerlink" href="#desacople-en-dos-procesos" title="Permalink to this headline">¶</a></h1>
+<p>Para mantener la coherencia del estado interno del procesador, un objeto Wrapper()
+se gestiona a través de un proxy de multiproceso, del paquete multiproccess 
+incorporado en Python 2.6</p>
+<p>Del módulo MainFrame podemos ver:</p>
+<blockquote>
+<dl class="docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">``</span></a></dt>
+<dd><p class="first">import Wrapper
+from multiprocessing.managers import BaseManager</p>
+<dl class="docutils">
+<dt>class MyManager(BaseManager):</dt>
+<dd>pass</dd>
+</dl>
+<p>MyManager.register(&#8216;Wrapper&#8217;, Wrapper)</p>
+<p class="last">manager = MyManager()  
+manager.start()        
+lib = self.manager.Wrapper() ``</p>
+</dd>
+</dl>
+</blockquote>
+<p>self.lib es un objeto wrapper, que tiene acceso a todo los métodos de este objeto
+pero interfaseado por el objeto manager, que es, en efecto, otro proceso.</p>
+<p>De esta manera el objeto wrapper mantiene una coherencia persistente del estado 
+del FPU y el programa en general (con su GUI, que al menos en linux realiza numerosos cálculos
+de punto flotante) otro.</p>
+<p>Es el sistema operativo el encargado de entregar a cada proceso su estado previo
+cuando el CPU le es asignado, permaneciendo inmune a la interferencia que producen
+dos tareas de un mismo proceso.</p>
+<p>Brillante esta tarjeta!</p>
+</div>
+<div class="section" id="introspecci-n">
+<h1>Introspección<a class="headerlink" href="#introspecci-n" title="Permalink to this headline">¶</a></h1>
+<p>Python es un lenguaje interpretado por lo que va &#8216;compilando&#8217; a medida que necesita
+Esto le permite maneter un total conocimiento de qué es lo que está ejecutando
+porque conoce el código.</p>
+<p>También hay una distinción entre cadenas de documentación (en general, cada entididad
+como Clase, método o función debería tener un string inmediatamente después que la
+describa).</p>
+<p>A través de la introspección se puede conocer cuales son los métodos que efectivamente
+existen en el código y recuperar sus cadenas de documentación. 
+Eso es lo que hace el método get_valid_instructions(): devuelve todos los métodos
+que comienzan con <em>F</em> (efe mayúscula, como empiezan todas las instrucciones 
+de ensamblador de la FPU) y su descripción, que es la línea 
+entre comilla justo debajo de la definición de cada una.</p>
+<p>Esta lista de instrucciones es la que se despliega al usuario como opciones 
+válidas para que este ingrese y ejecute. A su vez, su descripción (la cadena
+de documentación) se asocia en la interfaz como ToolTip de cada fila de la 
+lista de instrucciones</p>
+<p>Con esto tenemos al menos dos ventajas: manetenemos homogeneidad total entre
+lo que se mostrará al usuario (la lista de instrucciones válidas implementadas)
+con lo que verdaderamente está disponible en el código, y por otro lado
+manetenemos el código debidamente comentado y brindamos mejor usabilidad al usuario
+sin doble trabajo!</p>
+</div>
+<div class="section" id="validaci-n-de-instrucciones">
+<h1>Validación de Instrucciones<a class="headerlink" href="#validaci-n-de-instrucciones" title="Permalink to this headline">¶</a></h1>
+<p>El método <em>run_or_test_instruction</em> verifica que la intrucción que el usuario
+ingresa y posteriormente se ejecutará (se enviará a C y a través de este a ASM)
+sea válida.</p>
+<p>Para eso utiliza una forma, no poco ingeniosa, idea de Leonardo Rocha en su 
+_fpu8087sim</p>
+<p>Se basa en la sentencia <cite>exec</cite> que permite recibir una &#8220;cadena de caracteres&#8221; 
+y la intenta ejecutar como código python. Si la ejecución es exitosa, quiere 
+decir que lo que el usuario ingresó es válido.</p>
+<p>Para evitar que efectivamente se ejecute sobre la FPU una intrucción cuando se 
+ingresa, en modo Test se agrega una bandera <cite>run=False</cite>. Cada método de intrucción
+verifica esta bandera y en caso de ser falso, no realiza ninguna operación.</p>
+<p>Ejemplo de flujo:</p>
+<ol class="arabic simple">
+<li>El usuario ingresa &#8216;FINIT&#8217;</li>
+<li>El método convierte esta cadena a <cite>self.FINIT( run=False)</cite> e intenta ejecutarlo</li>
+<li>Como el metodo FINIT(run=False) no existe en el contexto de la clase Wrapper
+el resultado de la ejecución desencadenará una excepción que se canaliza
+en el <cite>except</cite> y devuelve False, indicando que la intrucción no es válida</li>
+</ol>
+<p>Otro ejemplo:</p>
+<ol class="arabic simple">
+<li>El usuario ingresa &#8216;FLD 3.1416&#8217;</li>
+<li>El método convierte la cadena a <cite>self.FLD(3.1416, run=False)</cite> y ejecuta</li>
+<li>Como el método está definido y los parámetros son válidos, el resultado es 
+verdadero.</li>
+</ol>
+<p>Este mismo método es el que invoca actionRunNext (en MainFrame.py) pero con 
+run=True para ejecutar efectivamente las intrucciones.</p>
+</div>
+<p id="module-myWidgets">Este módulo contiene diferentes clases que sobrecargar o agregan comportamientos
+a los controles (widgets) estándar de Wx.</p>
+<p>Por ejemplo, InstructionListCtrl incorpora métodos que manipulan el orden 
+de las filas (las intrucciones). También recibe un diccionario con el que asigna
+un ToolTip diferente para cada fila en función de la primera palabra (la intrucción
+ASM que se haya ingresado).</p>
+<p>TextCrlAutoComplete es la clase que se instancia para la caja de texto desde 
+donde se ingresan las intrucciones. Fue escrito por Edward Flick y otros. 
+Se le asigna una lista (un diccionario en nuestro caso) de cadenas ingresadas válidas
+y produce un efecto de &#8216;autocompleción&#8217; a medida que el usuario teclea</p>
+<p>RegisterListCtrl permite asignar tooltips diferentes por columna, para describir
+la función de cada bit de los registros Control y Estado.</p>
+<dl class="class">
+<dt id="myWidgets.InstructionListCtrl">
+<em class="property">
+class </em><tt class="descclassname">myWidgets.</tt><tt class="descname">InstructionListCtrl</tt><big>(</big><em>parent</em>, <em>ID</em>, <em>pos=wx.Point(-1</em>, <em>-1)</em>, <em>size=wx.Size(-1</em>, <em>-1)</em>, <em>style=0</em>, <em>tooltips=None</em><big>)</big><a class="headerlink" href="#myWidgets.InstructionListCtrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>widget List que permite seleccionar y mover filas</p>
+<dl class="method">
+<dt id="myWidgets.InstructionListCtrl.GetNextSelected">
+<tt class="descname">GetNextSelected</tt><big>(</big><em>current</em><big>)</big><a class="headerlink" href="#myWidgets.InstructionListCtrl.GetNextSelected" title="Permalink to this definition">¶</a></dt>
+<dd>Returns next selected item, or -1 when no more</dd></dl>
+
+<dl class="method">
+<dt id="myWidgets.InstructionListCtrl.delete">
+<tt class="descname">delete</tt><big>(</big><big>)</big><a class="headerlink" href="#myWidgets.InstructionListCtrl.delete" title="Permalink to this definition">¶</a></dt>
+<dd>elimina las instrucciones seleccionadas</dd></dl>
+
+<dl class="method">
+<dt id="myWidgets.InstructionListCtrl.get_list">
+<tt class="descname">get_list</tt><big>(</big><big>)</big><a class="headerlink" href="#myWidgets.InstructionListCtrl.get_list" title="Permalink to this definition">¶</a></dt>
+<dd>devuelve una lista de items de un list control</dd></dl>
+
+<dl class="method">
+<dt id="myWidgets.InstructionListCtrl.get_selected_items">
+<tt class="descname">get_selected_items</tt><big>(</big><big>)</big><a class="headerlink" href="#myWidgets.InstructionListCtrl.get_selected_items" title="Permalink to this definition">¶</a></dt>
+<dd>Gets the selected items for the list control.
+Selection is returned as a list of selected indices,
+low to high.</dd></dl>
+
+<dl class="method">
+<dt id="myWidgets.InstructionListCtrl.move_bottom">
+<tt class="descname">move_bottom</tt><big>(</big><big>)</big><a class="headerlink" href="#myWidgets.InstructionListCtrl.move_bottom" title="Permalink to this definition">¶</a></dt>
+<dd>agrupa y sube las instrucciones al tope de la lista</dd></dl>
+
+<dl class="method">
+<dt id="myWidgets.InstructionListCtrl.move_down">
+<tt class="descname">move_down</tt><big>(</big><big>)</big><a class="headerlink" href="#myWidgets.InstructionListCtrl.move_down" title="Permalink to this definition">¶</a></dt>
+<dd>sube un nivel las filas seleccionadas</dd></dl>
+
+<dl class="method">
+<dt id="myWidgets.InstructionListCtrl.move_top">
+<tt class="descname">move_top</tt><big>(</big><big>)</big><a class="headerlink" href="#myWidgets.InstructionListCtrl.move_top" title="Permalink to this definition">¶</a></dt>
+<dd>agrupa y sube las intrucciones al tope de la lista</dd></dl>
+
+<dl class="method">
+<dt id="myWidgets.InstructionListCtrl.move_up">
+<tt class="descname">move_up</tt><big>(</big><big>)</big><a class="headerlink" href="#myWidgets.InstructionListCtrl.move_up" title="Permalink to this definition">¶</a></dt>
+<dd>sube un nivel las filas seleccionadas</dd></dl>
+
+<dl class="method">
+<dt id="myWidgets.InstructionListCtrl.updateList">
+<tt class="descname">updateList</tt><big>(</big><em>list</em>, <em>selected=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#myWidgets.InstructionListCtrl.updateList" title="Permalink to this definition">¶</a></dt>
+<dd>reeplaza las intrucciones dadas por list y marca como seleccionadas
+las que se indiquen en selected</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="myWidgets.RegisterListCtrl">
+<em class="property">
+class </em><tt class="descclassname">myWidgets.</tt><tt class="descname">RegisterListCtrl</tt><big>(</big><em>parent</em>, <em>ID</em>, <em>pos=wx.Point(-1</em>, <em>-1)</em>, <em>size=wx.Size(-1</em>, <em>-1)</em>, <em>style=0</em><big>)</big><a class="headerlink" href="#myWidgets.RegisterListCtrl" title="Permalink to this definition">¶</a></dt>
+<dd>widget de lista que actualiza su tooltip en función de la columna</dd></dl>
+
+<dl class="class">
+<dt id="myWidgets.TextCtrlAutoComplete">
+<em class="property">
+class </em><tt class="descclassname">myWidgets.</tt><tt class="descname">TextCtrlAutoComplete</tt><big>(</big><em>parent</em>, <em>colNames=None</em>, <em>choices=None</em>, <em>multiChoices=None</em>, <em>showHead=True</em>, <em>dropDownClick=True</em>, <em>colFetch=-1</em>, <em>colSearch=0</em>, <em>hideOnNoMatch=True</em>, <em>selectCallback=None</em>, <em>entryCallback=None</em>, <em>matchFunction=None</em>, <em>**therest</em><big>)</big><a class="headerlink" href="#myWidgets.TextCtrlAutoComplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Código tomado de <a class="reference external" href="http://wiki.wxpython.org/TextCtrlAutoComplete">http://wiki.wxpython.org/TextCtrlAutoComplete</a></p>
+<dl class="method">
+<dt id="myWidgets.TextCtrlAutoComplete.SetChoices">
+<tt class="descname">SetChoices</tt><big>(</big><em>choices</em><big>)</big><a class="headerlink" href="#myWidgets.TextCtrlAutoComplete.SetChoices" title="Permalink to this definition">¶</a></dt>
+<dd>Sets the choices available in the popup wx.ListBox.
+The items will be sorted case insensitively.</dd></dl>
+
+<dl class="method">
+<dt id="myWidgets.TextCtrlAutoComplete.SetMultipleChoices">
+<tt class="descname">SetMultipleChoices</tt><big>(</big><em>choices</em>, <em>colSearch=0</em>, <em>colFetch=-1</em><big>)</big><a class="headerlink" href="#myWidgets.TextCtrlAutoComplete.SetMultipleChoices" title="Permalink to this definition">¶</a></dt>
+<dd>Set multi-column choice</dd></dl>
+
+<dl class="method">
+<dt id="myWidgets.TextCtrlAutoComplete.onKeyDown">
+<tt class="descname">onKeyDown</tt><big>(</big><em>event</em><big>)</big><a class="headerlink" href="#myWidgets.TextCtrlAutoComplete.onKeyDown" title="Permalink to this definition">¶</a></dt>
+<dd>Do some work when the user press on the keys:
+up and down: move the cursor
+left and right: move the search</dd></dl>
+
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Desacople en dos procesos</a></li>
+<li><a class="reference external" href="#introspecci-n">Introspección</a></li>
+<li><a class="reference external" href="#validaci-n-de-instrucciones">Validación de Instrucciones</a></li>
+</ul>
+
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/modules.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">FPU Inspector v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Martín Gaitán y Jorge Saffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+    </div>
+  </body>
+</html>
